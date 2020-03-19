@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.inspur.cmis.mapper.UserMapper">
-<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.User"> 
-	<result column="MEM_ID" property="userId"/>
-	<result column="CNAME" property="username"/>
-	<result column="MEM_PASS" property="password"/>
-	<result column="MEM_SEX" property="sex"/>
-	<result column="MEM_BORN" property="birthday"/>
-	<result column="MEM_MAIL" property="email"/>
-	<result column="MEM_QUESTION" property="question"/>
-	<result column="MEM_ANSWER" property="answer"/>
-	<result column="REGISTER_TIME" property="registerTime"/>
-	<result column="LAST_TIME" property="lastTime"/>
-	<result column="ISENABLE" property="isEnable"/>
-	<result column="ROLEID" property="roleId"/>
-</resultMap>
+	<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.User">
+		<result column="MEM_ID" property="userId" />
+		<result column="CNAME" property="username" />
+		<result column="MEM_PASS" property="password" />
+		<result column="MEM_SEX" property="sex" />
+		<result column="MEM_BORN" property="birthday" />
+		<result column="MEM_MAIL" property="email" />
+		<result column="MEM_QUESTION" property="question" />
+		<result column="MEM_ANSWER" property="answer" />
+		<result column="REGISTER_TIME" property="registerTime" />
+		<result column="LAST_TIME" property="lastTime" />
+		<result column="ISENABLE" property="isEnable" />
+		<result column="ROLEID" property="roleId" />
+	</resultMap>
 
-<!-- 登录实现得查询sql -->
-<select id="getUser" parameterType="user" resultMap="BaseResultMap">
-	select * from YC_MEMBER where 1=1 and CNAME=#{username} and MEM_PASS=#{password} and ISENABLE='T'
-</select>
+	<!-- 登录实现得查询sql -->
+	<select id="getUser" parameterType="user" resultMap="BaseResultMap">
+		select * from yc_member where 1=1 and CNAME=#{username} and MEM_PASS=#{password} and ISENABLE='T'
+	</select>
+
+	<!--用户的默认查询 -->
+	<select id="getUserList" resultMap="BaseResultMap">
+		select * from yc_member where 1=1
+	</select>
 </mapper>

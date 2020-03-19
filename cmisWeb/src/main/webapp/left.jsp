@@ -92,7 +92,7 @@ $(function(){
 	    <span><img src="images/leftico01.png" /></span>用户管理
 	    </div>
 	    	<ul class="menuson">
-	        <li><cite></cite><a href="manager/userInfo.html" target="rightFrame">用户管理</a><i></i></li>
+	        <li><cite></cite><a href="userInfoList" target="rightFrame">用户管理</a><i></i></li>
 	        </ul>    
 	   </dd>
     </c:if>
