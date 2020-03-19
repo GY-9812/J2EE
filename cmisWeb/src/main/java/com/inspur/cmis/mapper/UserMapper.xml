@@ -22,7 +22,13 @@
 	</select>
 
 	<!--用户的默认查询 -->
-	<select id="getUserList" resultMap="BaseResultMap">
+	<select id="getUserList" parameterType="Map" resultMap="BaseResultMap">
 		select * from yc_member where 1=1
+		<if test="userId!=null and userId!=''">
+			and MEM_ID=${userId}
+		</if>
+		<if test="username!=null and username!=''">
+			and CNAME like '%' #{username} '%'
+		</if>
 	</select>
 </mapper>

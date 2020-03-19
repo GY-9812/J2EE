@@ -62,14 +62,13 @@
 			<li><a href="#">用户管理</a></li>
 		</ul>
 	</div>
-	<form action="" method="post">
+	<form action="userInfoList" method="post">
 		<div class="formbody">
 			<ul class="seachform">
-				<li><label>用户编号</label><input name="" type="text"
+				<li><label>用户编号</label><input name="userId" type="text"
 					class="scinput" /></li>
-				<li><label>姓名</label><input name="" type="text" class="scinput" /></li>
-				<li><label>&nbsp;</label><input name="" type="submit"
-					class="scbtn" value="查询" /></li>
+				<li><label>姓名</label><input name="username" type="text" class="scinput" /></li>
+				<li><label>&nbsp;</label><input name="" type="submit" class="scbtn" value="查询" /></li>
 			</ul>
 		</div>
 
@@ -113,7 +112,9 @@
 						<td><input name="" type="checkbox" value="" /></td>
 						<td>${user.userId}</td>
 						<td>${user.username }</td>
-						<td>正常</td>
+						<td>
+							<c:if test="${user.isEnable=='T'}">启用</c:if>
+							<c:if test="${user.isEnable=='F'}">禁用</c:if></td>
 						<td>${user.registerTime}</td>
 						<td>${user.lastTime}</td>
 					</tr>
@@ -153,7 +154,6 @@
 			</div>
 		</div>
 	</form>
-
 	<script type="text/javascript">
 		$('.tablelist tbody tr:odd').addClass('odd');
 	</script>

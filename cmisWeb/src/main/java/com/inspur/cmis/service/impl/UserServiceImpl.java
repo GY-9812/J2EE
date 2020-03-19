@@ -1,6 +1,7 @@
 package com.inspur.cmis.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,9 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * 用户的默认查询
 	 */
-	public List<User> getUserList() {
+	public List<User> getUserList(Map<String,String> map) {
 		// TODO Auto-generated method stub
-		return userMapper.getUserList();
+		return userMapper.getUserList(map);
 	}
 
 }
