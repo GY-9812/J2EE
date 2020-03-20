@@ -32,6 +32,18 @@
 		if (confirm("重置密码,您确定要恢复初始密码吗?"))
 			window.close();
 	}
+	function gotoPage(pn){
+		//alert("pn===="+pn);
+		if(null!=pn && pn!=''){
+			document.form1.action="<%=basePath%>userInfoList?pn="+pn;
+		}
+		var pageNum=$("#toPageNums").val();
+		if(null!=pageNum && pageNum!=''){
+			document.form1.action="<%=basePath%>userInfoList?pn="+pageNum;
+		}
+		document.form1.submit();
+		//alter("pageNum=="+pageNum);
+	}
 </script>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -62,7 +74,7 @@
 			<li><a href="#">用户管理</a></li>
 		</ul>
 	</div>
-	<form action="userInfoList" method="post">
+	<form action="userInfoList" method="post" name="form1">
 		<div class="formbody">
 			<ul class="seachform">
 				<li><label>用户编号</label><input name="userId" type="text"
@@ -107,7 +119,7 @@
 				
 				</thead>
 				<tbody>
-				 <c:forEach items="${userList}" var="user" >
+				 <c:forEach items="${pageInfo.list}" var="user" >
 					<tr>
 						<td><input name="" type="checkbox" value="" /></td>
 						<td>${user.userId}</td>
@@ -125,28 +137,28 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="STYLE4"><div class="message">
-								共<i class="blue">260</i>条记录，当前显示第&nbsp;<i class="blue">1&nbsp;</i>页
+								共<i class="blue">${pageInfo.total }</i>条记录，当前显示第&nbsp;<i class="blue">${pageInfo.pageNum}&nbsp;</i>页
 							</div></td>
 						<td><table border="0" align="right" cellpadding="0"
 								cellspacing="0">
 								<tr>
 									<td width="45"><img src="<%=basePath%>images/first.gif" width="33"
-										height="20" style="cursor: hand" onclick="firstPage()" /></td>
+										height="20" style="cursor: hand" onclick="gotoPage(1)" /></td>
 									<td width="50"><img src="<%=basePath%>images/back.gif" width="43"
-										height="20" style="cursor: hand" onclick="priviousPage()" /></td>
+										height="20" style="cursor: hand" onclick="gotoPage(${pageInfo.pageNum-1})" /></td>
 									<td width="50"><img src="<%=basePath%>images/next.gif" width="43"
-										height="20" style="cursor: hand" onclick="nextPage()" /></td>
+										height="20" style="cursor: hand" onclick="gotoPage(${pageInfo.pageNum+1})" /></td>
 									<td width="40"><img src="<%=basePath%>images/last.gif" width="33"
-										height="20" style="cursor: hand" onclick="lastPage()" /></td>
+										height="20" style="cursor: hand" onclick="gotoPage(${pageInfo.pages})" /></td>
 									<td width="100"><div align="center">
-											<span class="STYLE1">转到第 <input name="textfield"
+											<span class="STYLE1">转到第 <input name="textfield" id="toPageNums"
 												type="text" size="4"
 												style="height: 16px; width: 35px; border: 1px solid #999999;" />
 												页
 											</span>
 										</div></td>
 									<td width="40"><img src="<%=basePath%>images/go.gif" width="33"
-										height="17" style="cursor: hand" onclick="goPage()" /></td>
+										height="17" style="cursor: hand" onclick="gotoPage('')" /></td>
 								</tr>
 							</table></td>
 					</tr>
