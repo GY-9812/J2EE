@@ -27,8 +27,35 @@ public class UserServiceImpl implements UserService {
 	 * 用户的默认查询
 	 */
 	public List<User> getUserList(Map<String,String> map) {
-		// TODO Auto-generated method stub
 		return userMapper.getUserList(map);
+	}
+
+	/**
+	 * 用户的删除操作
+	 */
+	public void deleteUser(int[] userIds) {
+		userMapper.deleteUser(userIds);
+	}
+
+	/**
+	 * 用户的启用操作
+	 */
+	public void openUser(int[] userIds) {
+		userMapper.openUser(userIds);
+	}
+
+	/**
+	 * 用户的禁用操作
+	 */
+	public void closeUser(int[] userIds) {
+		userMapper.closeUser(userIds);
+	}
+
+	/**
+	 * 密码的重置操作
+	 */
+	public void resetPass(int[] userIds) {
+		userMapper.resetPass(userIds);
 	}
 
 }

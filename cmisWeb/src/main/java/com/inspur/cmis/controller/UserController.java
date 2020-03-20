@@ -43,4 +43,54 @@ public class UserController {
 		return "user/userInfo.jsp";
 	}
 
+	@RequestMapping("/deleteUser")
+	public String deleteUsers(String userIds) {
+		String usersId[]=userIds.split(",");
+		int user_ids[] = new int[usersId.length];
+		for (int i = 0; i < usersId.length; i++) {
+			user_ids[i]=Integer.parseInt(usersId[i]);
+		}
+		userService.deleteUser(user_ids);
+		
+		//删完数据后要重新查询一次
+		return "redirect:userInfoList";
+	}
+
+	@RequestMapping("/openUser")
+	public String openUsers(String userIds) {
+		String usersId[]=userIds.split(",");
+		int user_ids[] = new int[usersId.length];
+		for (int i = 0; i < usersId.length; i++) {
+			user_ids[i]=Integer.parseInt(usersId[i]);
+		}
+		userService.openUser(user_ids);
+		
+		//启用完数据后要重新查询一次
+		return "redirect:userInfoList";
+	}
+
+	@RequestMapping("/closeUser")
+	public String closeUser(String userIds) {
+		String usersId[]=userIds.split(",");
+		int user_ids[] = new int[usersId.length];
+		for (int i = 0; i < usersId.length; i++) {
+			user_ids[i]=Integer.parseInt(usersId[i]);
+		}
+		userService.closeUser(user_ids);
+		
+		//禁用完数据后要重新查询一次
+		return "redirect:userInfoList";
+	}
+	@RequestMapping("/resetPass")
+	public String resetPass(String userIds) {
+		String usersId[]=userIds.split(",");
+		int user_ids[] = new int[usersId.length];
+		for (int i = 0; i < usersId.length; i++) {
+			user_ids[i]=Integer.parseInt(usersId[i]);
+		}
+		userService.resetPass(user_ids);
+		
+		//禁用完数据后要重新查询一次
+		return "redirect:userInfoList";
+	}
 }

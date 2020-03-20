@@ -31,4 +31,36 @@
 			and CNAME like '%' #{username} '%'
 		</if>
 	</select>
+	
+	<!-- 用户的批量删除 -->
+	<delete id="deleteUser" parameterType="int[]">
+		delete from yc_member where mem_id in
+		<foreach collection="array" item="ids" open="(" close=")" separator="," index="no">
+			#{ids}
+		</foreach>
+	</delete>
+	
+	<!--用户的启用操作 -->
+	<update id="openUser">
+		update yc_member set isenable='T' where mem_id in
+		<foreach collection="array" item="ids" open="(" close=")" separator="," index="no">
+			#{ids}
+		</foreach>
+	</update>
+	
+	<!--用户的禁用操作 -->
+	<update id="closeUser">
+		update yc_member set isenable='F' where mem_id in
+		<foreach collection="array" item="ids" open="(" close=")" separator="," index="no">
+			#{ids}
+		</foreach>
+	</update>
+	
+	<!--密码的重置操作 -->
+	<update id="resetPass">
+		update yc_member set mem_pass='123456' where mem_id in
+		<foreach collection="array" item="ids" open="(" close=")" separator="," index="no">
+			#{ids}
+		</foreach>
+	</update>
 </mapper>

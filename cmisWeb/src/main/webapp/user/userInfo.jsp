@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+    pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
 	String path = request.getContextPath();
@@ -17,20 +17,60 @@
 <script type="text/javascript" src="<%=basePath%>js/jquery.js"></script>
 <script type="text/javascript">
 	function confirmMsgDel() {
+		var ids="";
+		var $chkBoxes=$('#userTable').find('input:checked'); //找到选中的checkBox集
+		if ($chkBoxes.length==0){   //如果不选会弹出警告框
+			alert('请至少选择一个数据！');
+			return false;
+		}
+		//遍历被选中的数据集
+		$($chkBoxes).each(function(){
+			ids+=$(this).attr('data-id')+",";
+		})
 		if (confirm("删除用户信息,您确定要删除吗?"))
-			window.close();
+			window.location="<%=basePath%>deleteUser?userIds="+ids;
 	}
 	function userOpen() {
+		var ids="";
+		var $chkBoxes=$('#userTable').find('input:checked'); //找到选中的checkBox集
+		if ($chkBoxes.length==0){   //如果不选会弹出警告框
+			alert('请至少选择一个数据！');
+			return false;
+		}
+		//遍历被选中的数据集
+		$($chkBoxes).each(function(){
+			ids+=$(this).attr('data-id')+",";
+		})
 		if (confirm("您确定要启用该用户吗?"))
-			window.close();
+			window.location="<%=basePath%>openUser?userIds="+ids;
 	}
 	function userClose() {
+		var ids="";
+		var $chkBoxes=$('#userTable').find('input:checked'); //找到选中的checkBox集
+		if ($chkBoxes.length==0){   //如果不选会弹出警告框
+			alert('请至少选择一个数据！');
+			return false;
+		}
+		//遍历被选中的数据集
+		$($chkBoxes).each(function(){
+			ids+=$(this).attr('data-id')+",";
+		})
 		if (confirm("您确定要禁用该用户吗?"))
-			window.close();
+			window.location="<%=basePath%>closeUser?userIds="+ids;
 	}
 	function resetPass() {
+		var ids="";
+		var $chkBoxes=$('#userTable').find('input:checked'); //找到选中的checkBox集
+		if ($chkBoxes.length==0){   //如果不选会弹出警告框
+			alert('请至少选择一个数据！');
+			return false;
+		}
+		//遍历被选中的数据集
+		$($chkBoxes).each(function(){
+			ids+=$(this).attr('data-id')+",";
+		})
 		if (confirm("重置密码,您确定要恢复初始密码吗?"))
-			window.close();
+			window.location="<%=basePath%>resetPass?userIds="+ids;
 	}
 	function gotoPage(pn){
 		//alert("pn===="+pn);
@@ -101,7 +141,7 @@
 								src="<%=basePath%>images/t07.png" height="20" width="20" /></span>重置密码</a></li>
 				</ul>
 			</div>
-			<table class="tablelist">
+			<table class="tablelist" id="userTable">
 				<thead>
 					<tr class="tablehead">
 						<td colspan="11">客户信息列表</td>
@@ -109,7 +149,7 @@
 				</thead>
 				<thead>
 					<tr>
-						<th><input name="" type="checkbox" value="" /></th>
+						<th>选择</th>
 						<th>用户编号</th>
 						<th>姓名</th>
 						<th>状态</th>
@@ -121,7 +161,7 @@
 				<tbody>
 				 <c:forEach items="${pageInfo.list}" var="user" >
 					<tr>
-						<td><input name="" type="checkbox" value="" /></td>
+						<td><input name="user_ids" type="checkbox" value="${user.userId}" data-id="${user.userId}"/></td>
 						<td>${user.userId}</td>
 						<td>${user.username }</td>
 						<td>
