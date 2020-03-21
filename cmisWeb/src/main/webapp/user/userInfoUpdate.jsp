@@ -38,8 +38,8 @@
 	<div class="place">
 		<span>位置：</span>
 		<ul class="placeul">
-			<li><a href="userInfo.html">用户管理</a></li>
-			<li><a href="userInfoUpdate.html">修改</a></li>
+			<li><a href="<%=basePath%>userInfoList">用户管理</a></li>
+			<li><a href="#">修改</a></li>
 		</ul>
 	</div>
 

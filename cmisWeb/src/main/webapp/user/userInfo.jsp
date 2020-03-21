@@ -199,7 +199,8 @@
 									<td width="40"><img src="<%=basePath%>images/go.gif" width="33"
 										height="17" style="cursor: hand" onclick="gotoPage('')" /></td>
 								</tr>
-							</table></td>
+							</table>
+						</td>
 					</tr>
 				</table>
 			</div>
