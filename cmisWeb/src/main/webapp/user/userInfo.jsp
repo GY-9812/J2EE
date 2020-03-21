@@ -127,9 +127,9 @@
 		<div class="rightinfo">
 			<div class="tools">
 				<ul class="toolbar1">
-					<li><a href="userInfoAdd.html"><span><img
+					<li><a href="<%=basePath%>user/userInfoAdd.jsp"><span><img
 								src="<%=basePath%>images/t01.png" /></span>添加</a></li>
-					<li><a href="userInfoUpdate.html"><span><img
+					<li><a href="<%=basePath%>user/userInfoUpdate.jsp"><span><img
 								src="<%=basePath%>images/t02.png" /></span>修改</a></li>
 					<li><a href="javascript:confirmMsgDel()"><span><img
 								src="<%=basePath%>images/t03.png" /></span>删除</a></li>
@@ -164,8 +164,7 @@
 						<td><input name="user_ids" type="checkbox" value="${user.userId}" data-id="${user.userId}"/></td>
 						<td>${user.userId}</td>
 						<td>${user.username }</td>
-						<td>
-							<c:if test="${user.isEnable=='T'}">启用</c:if>
+						<td><c:if test="${user.isEnable=='T'}">启用</c:if>
 							<c:if test="${user.isEnable=='F'}">禁用</c:if></td>
 						<td>${user.registerTime}</td>
 						<td>${user.lastTime}</td>

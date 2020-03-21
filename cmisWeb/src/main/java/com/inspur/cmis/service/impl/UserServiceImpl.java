@@ -1,5 +1,6 @@
 package com.inspur.cmis.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,20 @@ public class UserServiceImpl implements UserService {
 	 */
 	public List<User> getUserList(Map<String,String> map) {
 		return userMapper.getUserList(map);
+	}
+	
+	/**
+	 * 用户的添加操作
+	 */
+	public void addUserInfo(User user) {
+		userMapper.addUserInfo(user);
+	}
+	
+	/**
+	 * 用户的修改操作
+	 */
+	public void updateUserInfo(User user) {
+		userMapper.updateUserInfo(user);
 	}
 
 	/**

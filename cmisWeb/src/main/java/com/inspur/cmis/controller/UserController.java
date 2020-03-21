@@ -42,6 +42,20 @@ public class UserController {
 		model.addAttribute("username", username);
 		return "user/userInfo.jsp";
 	}
+	
+	@RequestMapping("/addUserInfo")
+	public String addUserInfo(User user){
+		userService.addUserInfo(user);
+		//添加完数据后要重新查询一次
+		return "redirect:userInfoList";
+	}
+	
+	@RequestMapping("/updateUserInfo")
+	public String updateUserInfo(User user){
+		userService.updateUserInfo(user);
+		//修改完数据后要重新查询一次
+		return "redirect:userInfoList";
+	}
 
 	@RequestMapping("/deleteUser")
 	public String deleteUsers(String userIds) {
@@ -90,7 +104,7 @@ public class UserController {
 		}
 		userService.resetPass(user_ids);
 		
-		//禁用完数据后要重新查询一次
+		//重置密码完数据后要重新查询一次
 		return "redirect:userInfoList";
 	}
 }

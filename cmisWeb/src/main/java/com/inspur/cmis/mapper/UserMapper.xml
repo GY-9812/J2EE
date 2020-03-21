@@ -16,7 +16,7 @@
 		<result column="ROLEID" property="roleId" />
 	</resultMap>
 
-	<!-- 登录实现得查询sql -->
+	<!-- 登录实现的查询sql -->
 	<select id="getUser" parameterType="user" resultMap="BaseResultMap">
 		select * from yc_member where 1=1 and CNAME=#{username} and MEM_PASS=#{password} and ISENABLE='T'
 	</select>
@@ -31,6 +31,16 @@
 			and CNAME like '%' #{username} '%'
 		</if>
 	</select>
+	
+	<!--用户的添加操作 -->
+	<insert id="addUserInfo" parameterType="User">
+		insert into yc_member(MEM_ID,CNAME,MEM_SEX,MEM_BORN,ROLEID) values(#{userId},#{username},#{sex},#{birthday},#{roleId})
+	</insert>
+	
+	<!--用户的修改操作 -->
+	<update id="updateUserInfo" parameterType="User">
+		update yc_member set CNAME=#{username},MEM_SEX=#{sex},MEM_BORN=#{birthday},ROLEID=#{roleId} where MEM_ID=#{userId}
+	</update>
 	
 	<!-- 用户的批量删除 -->
 	<delete id="deleteUser" parameterType="int[]">

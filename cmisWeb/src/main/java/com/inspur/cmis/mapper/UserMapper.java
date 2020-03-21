@@ -12,4 +12,6 @@ public interface UserMapper {
 	public void openUser(int userIds[]);
 	public void closeUser(int userIds[]);
 	public void resetPass(int userIds[]);
+	public void addUserInfo(User user);
+	public void updateUserInfo(User user);
 }
