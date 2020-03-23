@@ -14,4 +14,5 @@ public interface UserMapper {
 	public void resetPass(int userIds[]);
 	public void addUserInfo(User user);
 	public void updateUserInfo(User user);
+	public List<User> getUserByUserName(String username);
 }

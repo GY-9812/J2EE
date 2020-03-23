@@ -40,15 +40,15 @@ $(function(){
 <body style="background:#f0f9fd;">
 	<div class="lefttop"><span></span>菜单</div>
     <dl class="leftmenu">
-      <c:if test="${user.roleId=='管理员'}">
+      <c:if test="${user.roleId=='1'}">
 	    <dd>
 	    <div class="title">
 	    <span><img src="images/leftico01.png" /></span>客户经理信息管理
 	    </div>
 	    	<ul class="menuson">
-	        <li><cite></cite><a href="manager/clientMgr.html" target="rightFrame">客户经理信息综合维护</a><i></i></li>
-	        <li><cite></cite><a href="manager/clientMgrImport.html" target="rightFrame">批量导入</a><i></i></li>
-   			<li><cite></cite><a href="manager/clientMgrInfoOther.html"  target="rightFrame">客户经理辅助信息维护</a><i></i></li>
+	        <li><cite></cite><a href="user/clientMgr.jsp" target="rightFrame">客户经理信息综合维护</a><i></i></li>
+	        <li><cite></cite><a href="user/clientMgrImport.jsp" target="rightFrame">批量导入</a><i></i></li>
+   			<li><cite></cite><a href="user/clientMgrInfoOther.jsp"  target="rightFrame">客户经理辅助信息维护</a><i></i></li>
 	        </ul>    
 	    </dd>
 	    </c:if>
@@ -57,8 +57,8 @@ $(function(){
 	    <span><img src="images/leftico01.png" /></span>营销管理
 	    </div>
 	    	<ul class="menuson">
-	        <li><cite></cite><a href="manager/clientInfo.html" target="rightFrame">客户信息管理</a><i></i></li>
-	        <li><cite></cite><a href="manager/marketRecord.html" target="rightFrame">营销记录管理</a><i></i></li>
+	        <li><cite></cite><a href="user/clientInfo.jsp" target="rightFrame">客户信息管理</a><i></i></li>
+	        <li><cite></cite><a href="user/marketRecord.jsp" target="rightFrame">营销记录管理</a><i></i></li>
 	        </ul>    
 	    </dd>
 	   <dd>
@@ -66,8 +66,8 @@ $(function(){
 	    <span><img src="images/leftico01.png" /></span>日常工作管理
 	    </div>
 	    	<ul class="menuson">
-	        <li><cite></cite><a href="manager/regularMeeting.html" target="rightFrame">例会管理</a><i></i></li>
-	        <li><cite></cite><a href="manager/workMgr.html" target="rightFrame">工作管理</a><i></i></li>
+	        <li><cite></cite><a href="user/regularMeeting.jsp" target="rightFrame">例会管理</a><i></i></li>
+	        <li><cite></cite><a href="user/workMgr.jsp" target="rightFrame">工作管理</a><i></i></li>
 	        </ul>    
 	   </dd>
 	   <dd>
@@ -75,7 +75,7 @@ $(function(){
 	    <span><img src="images/leftico01.png" /></span>报表管理
 	    </div>
 	    	<ul class="menuson">
-	        <li><cite></cite><a href="manager/clientMgrStat.html" target="rightFrame">报表管理</a><i></i></li>
+	        <li><cite></cite><a href="user/clientMgrStat.jsp" target="rightFrame">报表管理</a><i></i></li>
 	        </ul>    
 	   </dd>
 	   <dd>
@@ -83,10 +83,10 @@ $(function(){
 	    <span><img src="images/leftico01.png" /></span>学习园地管理
 	    </div>
 	    	<ul class="menuson">
-	        <li><cite></cite><a href="manager/studyMgr.html" target="rightFrame">学习园地管理</a><i></i></li>
+	        <li><cite></cite><a href="user/studyMgr.jsp" target="rightFrame">学习园地管理</a><i></i></li>
 	        </ul>    
 	   </dd>
-	   <c:if test="${user.roleId=='管理员'}">
+	   <c:if test="${user.roleId=='1'}">
 	   <dd>
 	    <div class="title">
 	    <span><img src="images/leftico01.png" /></span>用户管理

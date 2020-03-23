@@ -32,13 +32,6 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	/**
-	 * 用户的添加操作
-	 */
-	public void addUserInfo(User user) {
-		userMapper.addUserInfo(user);
-	}
-	
-	/**
 	 * 用户的修改操作
 	 */
 	public void updateUserInfo(User user) {
@@ -71,6 +64,19 @@ public class UserServiceImpl implements UserService {
 	 */
 	public void resetPass(int[] userIds) {
 		userMapper.resetPass(userIds);
+	}
+	
+	/**
+	 * 用户的添加操作
+	 */
+	public void addUserInfo(User user) {
+		userMapper.addUserInfo(user);
+	}
+	
+	@Override
+	public List<User> getUserByUserName(String username) {
+		// TODO Auto-generated method stub
+		return userMapper.getUserByUserName(username);
 	}
 
 }

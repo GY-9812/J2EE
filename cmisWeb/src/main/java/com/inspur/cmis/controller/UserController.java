@@ -1,5 +1,7 @@
 package com.inspur.cmis.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -43,18 +46,11 @@ public class UserController {
 		return "user/userInfo.jsp";
 	}
 	
-	@RequestMapping("/addUserInfo")
-	public String addUserInfo(User user){
-		userService.addUserInfo(user);
-		//添加完数据后要重新查询一次
-		return "redirect:userInfoList";
-	}
-	
 	@RequestMapping("/updateUserInfo")
 	public String updateUserInfo(User user){
 		userService.updateUserInfo(user);
 		//修改完数据后要重新查询一次
-		return "redirect:userInfoList";
+		return "/user/userInfoUpdate.jsp";
 	}
 
 	@RequestMapping("/deleteUser")
@@ -106,5 +102,41 @@ public class UserController {
 		
 		//重置密码完数据后要重新查询一次
 		return "redirect:userInfoList";
+	}
+	
+	@RequestMapping("/addUserInfo")
+	public String addUserInfo(User user,Model model){		
+		//处理用户信息中页面未维护的要素
+		//获取当前时间
+		Date today=new Date();
+		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+		String time=format.format(today);
+		
+		user.setRegisterTime(time);
+		user.setLastTime(time);
+		user.setIsEnable("T");
+		user.setAnswer(user.getPassword());
+		
+		userService.addUserInfo(user);
+
+		model.addAttribute("success", "添加用户成功！");
+		model.addAttribute("member", user);
+		model.addAttribute("flag", "1");
+		
+		return "/user/userInfoAdd.jsp";
+	}
+	
+	@RequestMapping("/checkUser")
+	@ResponseBody
+	public Map checkUser(String username) {
+		System.out.println("前台Ajax传递过来的参数: " +username);
+		List<User> selectUser = userService.getUserByUserName(username);
+		Map map = new HashMap();
+		map.put("selectUser", selectUser);
+		if (selectUser.size() >= 1) {
+			map.put("msg", "该用户名已存在！");
+		}
+		System.out.println("map==="+map);
+		return map;
 	}
 }
