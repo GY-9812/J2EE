@@ -30,13 +30,6 @@ public class UserServiceImpl implements UserService {
 	public List<User> getUserList(Map<String,String> map) {
 		return userMapper.getUserList(map);
 	}
-	
-	/**
-	 * 用户的修改操作
-	 */
-	public void updateUserInfo(User user) {
-		userMapper.updateUserInfo(user);
-	}
 
 	/**
 	 * 用户的删除操作
@@ -81,6 +74,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserByUserId(int userId) {
 		return userMapper.getUserByUserId(userId);
+	}
+	
+	/**
+	 * 用户的修改操作
+	 */
+	public void updateUserInfo(User user) {
+		userMapper.updateUserInfo(user);
 	}
 
 }
