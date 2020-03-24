@@ -134,8 +134,8 @@
 	<form action="userInfoList" method="post" name="form1">
 		<div class="formbody">
 			<ul class="seachform">
-				<li><label>用户编号</label><input name="userId" type="text" class="scinput" value="userId"/></li>
-				<li><label>姓名</label><input name="username" type="text" class="scinput" value="username"/></li>
+				<li><label>用户编号</label><input name="userId" type="text" class="scinput" value="${userId}"/></li>
+				<li><label>姓名</label><input name="username" type="text" class="scinput" value="${username}"/></li>
 				<li><label>&nbsp;</label><input name="" type="submit" class="scbtn" value="查询" /></li>
 			</ul>
 		</div>
@@ -170,7 +170,7 @@
 						<th>姓名</th>
 						<th>状态</th>
 						<th>注册时间</th>
-						<th>最后登录时间</th>
+						<th>最后修改时间</th>
 					</tr>
 				
 				</thead>
