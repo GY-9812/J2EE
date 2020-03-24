@@ -83,7 +83,7 @@ $(function(){
 	    <span><img src="images/leftico01.png" /></span>学习园地管理
 	    </div>
 	    	<ul class="menuson">
-	        <li><cite></cite><a href="user/studyMgr.jsp" target="rightFrame">学习园地管理</a><i></i></li>
+	        <li><cite></cite><a href="studyList" target="rightFrame">学习园地管理</a><i></i></li>
 	        </ul>    
 	   </dd>
 	   <c:if test="${user.roleId=='1'}">
