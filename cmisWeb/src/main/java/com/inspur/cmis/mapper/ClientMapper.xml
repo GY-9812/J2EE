@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inspur.cmis.mapper.ClientMapper">
+	<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.Client">
+		<result column="C_KEY" property="key" />
+		<result column="C_CM_ID" property="cmid" />
+		<result column="C_SSN" property="ssn" />
+		<result column="C_NAME" property="clientname" />
+		<result column="C_TEL" property="tel" />
+		<result column="C_SALARY" property="salary" />
+		<result column="C_BALANCE" property="balance" />
+		<result column="C_DEBT" property="debt" />
+		<result column="C_BUSINESS" property="business" />
+		<result column="C_UNIT" property="unit" />
+		<result column="C_ADD" property="address" />
+	</resultMap>
+
+	<!--客户的默认查询 -->
+	<select id="getClientList" parameterType="Map" resultMap="BaseResultMap">
+		select * from gzcrm_cinfo where 1=1
+		<if test="cmid!=null and cmid!=''">
+			and C_CM_ID=${cmid}
+		</if>
+		<if test="clientname!=null and clientname!=''">
+			and C_NAME like '%' #{clientname} '%'
+		</if>
+		<if test="ssn!=null and ssn!=''">
+			and C_SSN like '%' #{ssn} '%'
+		</if>
+	</select>
+	
+	<!--根据cmid查找客户经理名-->
+	<select id="getUserName" parameterType="int" resultType="String">
+		select CNAME from yc_member where MEM_ID=#{cmid}
+	</select>
+</mapper>

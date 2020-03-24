@@ -57,7 +57,7 @@ $(function(){
 	    <span><img src="images/leftico01.png" /></span>营销管理
 	    </div>
 	    	<ul class="menuson">
-	        <li><cite></cite><a href="user/clientInfo.jsp" target="rightFrame">客户信息管理</a><i></i></li>
+	        <li><cite></cite><a href="clientInfoList" target="rightFrame">客户信息管理</a><i></i></li>
 	        <li><cite></cite><a href="user/marketRecord.jsp" target="rightFrame">营销记录管理</a><i></i></li>
 	        </ul>    
 	    </dd>
