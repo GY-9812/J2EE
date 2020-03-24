@@ -84,6 +84,23 @@
 		document.form1.submit();
 		//alter("pageNum=="+pageNum);
 	}
+	function modifyUser() {
+		var $ids=[];     //定义一个空数组
+		var $chkBoxes=$('#userTable').find('input:checked'); //找到选中的checkBox集
+		if ($chkBoxes.length==0){   //如果不选会弹出警告框
+			alert('请选择一个数据！');
+			return false;
+		}
+		if ($chkBoxes.length>1){   //如果选择多于一个会弹出警告框
+			alert('最多只能选择一个数据！');
+			return false;
+		}
+		//遍历被选中的数据集
+		$($chkBoxes).each(function(){
+			$ids.push($(this).attr('data-id'));
+		})
+		window.location="<%=basePath%>modifyUser?userId="+$ids[0];
+	}
 </script>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -129,7 +146,7 @@
 				<ul class="toolbar1">
 					<li><a href="<%=basePath%>user/userInfoAdd.jsp"><span><img
 								src="<%=basePath%>images/t01.png" /></span>添加</a></li>
-					<li><a href="<%=basePath%>user/userInfoUpdate.jsp"><span><img
+					<li><a href="javascript:modifyUser()"><span><img
 								src="<%=basePath%>images/t02.png" /></span>修改</a></li>
 					<li><a href="javascript:confirmMsgDel()"><span><img
 								src="<%=basePath%>images/t03.png" /></span>删除</a></li>

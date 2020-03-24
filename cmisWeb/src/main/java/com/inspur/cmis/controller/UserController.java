@@ -45,13 +45,6 @@ public class UserController {
 		model.addAttribute("username", username);
 		return "user/userInfo.jsp";
 	}
-	
-	@RequestMapping("/updateUserInfo")
-	public String updateUserInfo(User user){
-		userService.updateUserInfo(user);
-		//修改完数据后要重新查询一次
-		return "/user/userInfoUpdate.jsp";
-	}
 
 	@RequestMapping("/deleteUser")
 	public String deleteUsers(String userIds) {
@@ -138,5 +131,31 @@ public class UserController {
 		}
 		System.out.println("map==="+map);
 		return map;
+	}
+	
+	@RequestMapping("/modifyUser")
+	public String modifyUser(String userId,Model model){
+		int user_id=Integer.parseInt(userId);
+		User user=userService.getUserByUserId(user_id);
+		model.addAttribute("member", user);
+		return "/user/userInfoUpdate.jsp";
+	}
+	
+	@RequestMapping("/updateUserInfo")
+	public String updateUserInfo(User user,Model model){
+		//处理用户信息中页面未维护的要素
+		//获取当前时间
+		Date today=new Date();
+		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+		String time=format.format(today);
+		user.setLastTime(time);
+
+		userService.updateUserInfo(user);
+		
+		model.addAttribute("success", "修改用户成功！");
+		model.addAttribute("member", user);
+		model.addAttribute("flag", "1");
+		
+		return "/user/userInfoUpdate.jsp";
 	}
 }

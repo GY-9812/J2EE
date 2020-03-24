@@ -15,6 +15,7 @@ public interface UserService {
    public void closeUser(int userIds[]);
    public void resetPass(int userIds[]);
    public void addUserInfo(User user);
-   public void updateUserInfo(User user);
    public List<User> getUserByUserName(String username);
+   public User getUserByUserId(int userId);
+   public void updateUserInfo(User user);
 }

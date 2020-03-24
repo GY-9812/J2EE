@@ -32,11 +32,6 @@
 		</if>
 	</select>
 	
-	<!--用户的修改操作 -->
-	<update id="updateUserInfo" parameterType="User">
-		update yc_member set CNAME=#{username},MEM_SEX=#{sex},MEM_BORN=#{birthday},ROLEID=#{roleId} where MEM_ID=#{userId}
-	</update>
-	
 	<!-- 用户的批量删除 -->
 	<delete id="deleteUser" parameterType="int[]">
 		delete from yc_member where mem_id in
@@ -72,11 +67,21 @@
 	<!--用户的添加操作 -->
 	<insert id="addUserInfo" parameterType="User">
 		insert into yc_member(MEM_ID,CNAME,MEM_PASS,MEM_SEX,MEM_BORN,MEM_MAIL,MEM_QUESTION,MEM_ANSWER,REGISTER_TIME,LAST_TIME,ISENABLE,ROLEID) 
-					values(#{userId},#{username},#{password},#{sex},#{birthday},#{email},#{question},#{answer},#{registerTime},#{lastTime},#{isEnable},#{roleId})
+		values(#{userId},#{username},#{password},#{sex},#{birthday},#{email},#{question},#{answer},#{registerTime},#{lastTime},#{isEnable},#{roleId})
 	</insert>
 	
 	<!-- 校验用户名是否已存在 -->
 	<select id="getUserByUserName" parameterType="String" resultMap="BaseResultMap">
 		select * from yc_member where CNAME=#{username}
 	</select>
+	
+	<!--根据用户编号查询用户信息-->
+	<select id="getUserByUserId"  parameterType="int" resultMap="BaseResultMap">
+		select * from yc_member where MEM_ID=#{userId}
+	</select>
+	
+	<!--用户的修改操作 -->
+	<update id="updateUserInfo" parameterType="user">
+		update yc_member set CNAME=#{username},MEM_SEX=#{sex},MEM_BORN=#{birthday},MEM_MAIL=#{email},LAST_TIME=#{lastTime},ROLEID=#{roleId} where MEM_ID=#{userId}
+	</update>
 </mapper>
