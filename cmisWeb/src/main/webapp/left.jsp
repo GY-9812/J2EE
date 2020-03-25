@@ -66,7 +66,7 @@ $(function(){
 	    <span><img src="images/leftico01.png" /></span>日常工作管理
 	    </div>
 	    	<ul class="menuson">
-	        <li><cite></cite><a href="user/regularMeeting.jsp" target="rightFrame">例会管理</a><i></i></li>
+	        <li><cite></cite><a href="regularMeetList" target="rightFrame">例会管理</a><i></i></li>
 	        <li><cite></cite><a href="user/workMgr.jsp" target="rightFrame">工作管理</a><i></i></li>
 	        </ul>    
 	   </dd>
