@@ -1,5 +1,7 @@
 package com.inspur.cmis.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,11 +11,17 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -44,16 +52,48 @@ public class StudyController {
 		model.addAttribute("type", type);
 		return "/user/studyMgr.jsp";
 	}
+
+	@RequestMapping("/downLoadStudyFile")
+	public ResponseEntity<byte[]> downFile(String fileName, HttpServletRequest req) throws IOException {
+		String url = req.getSession().getServletContext().getRealPath("/upload/meet");
+		File file = new File(url + "/" + fileName);
+		HttpHeaders headers = new HttpHeaders();
+		// 下载显示的文件名，解决中文名称乱码问题
+		String downloadFielName = new String(fileName.getBytes("UTF-8"),"iso-8859-1");
+		// 通知浏览器以attachment（下载格式）打开
+		headers.setContentDispositionFormData("attachment", downloadFielName);
+		// application/octet-stream
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),headers, HttpStatus.CREATED);
+	}
 	
 	@RequestMapping("/addStudy")
-	public String  addStudy(Study study ,Model model,HttpServletRequest request,HttpSession session) {
+	public String  addStudy(Study study ,Model model,MultipartFile upload, HttpServletRequest request) {
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		study.setUrl(fileName);
 		Date today=new Date();
 		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
 		String date=format.format(today);
-		
 		study.setDate(date);
-		String uper=(String)session.getAttribute("username");
-		study.setUper(uper);
 		
 		model.addAttribute("success", "添加学习资料成功！");
 		model.addAttribute("member", study);
@@ -71,7 +111,30 @@ public class StudyController {
 	}
 	
 	@RequestMapping("/updateStudy")
-	public String updateStudy(Study study ,Model model) {
+	public String updateStudy(Study study ,Model model,MultipartFile upload, HttpServletRequest request) {
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (fileName!="") {
+			study.setUrl(fileName);
+		}
 		//获取当前时间
 		Date today=new Date();
 		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");

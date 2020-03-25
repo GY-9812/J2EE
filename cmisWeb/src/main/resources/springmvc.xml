@@ -30,7 +30,27 @@
 		实际开发时使用mvc:annotation-driven conversion-service="conversionService"-->
 	<mvc:annotation-driven  />
    
+	<!--实际开发时使用mvc:annotation-driven conversion-service="conversionService" -->
+	<mvc:annotation-driven conversion-service="conversionService"/>
 
+	<!-- 自定义类型转换器（String转换为Date型） -->
+	<bean id="conversionService"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean class="com.inspur.cmis.convert.CustomDateConverter" />
+			</list>
+		</property>
+	</bean>
+	<!--⽂件上传 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 设置上传⽂件的最⼤尺⼨为5MB -->
+		<property name="maxUploadSize">
+			<value>5242880</value>
+		</property>
+	</bean>
+	
 	<!-- 视图解析器:解析jsp，默认使用jstl标签，classpath下的有jstl的包 -->
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">

@@ -107,10 +107,10 @@
 					<div class="vocation">
 						<select class="select1" name="type">
 							<option value="">请选择</option>
-							<option value="1">规章制度</option>
-							<option value="2">学习培训材料</option>
-							<option value="3">资格岗位考试教程</option>
-							<option value="4">客户营销技巧</option>
+							<option value="1" <c:if test="${type eq '1' }">selected</c:if>>规章制度</option>
+							<option value="2" <c:if test="${type eq '2' }">selected</c:if>>学习培训材料</option>
+							<option value="3" <c:if test="${type eq '3' }">selected</c:if>>资格岗位考试教程</option>
+							<option value="4" <c:if test="${type eq '4' }">selected</c:if>>客户营销技巧</option>
 						</select>
 					</div></li>
 				<li><label>&nbsp;</label><input type="submit" class="scbtn" value="查询" /></li>
@@ -155,7 +155,7 @@
 							<c:if test="${study.type=='4'}">客户营销技巧</c:if></td>
 						<td>${study.des}</td>
 						<td>${study.date}</td>
-						<td>${study.url}</td>
+						<td><a href="<%=basePath%>downLoadStudyFile?fileName=${study.url}" class="tablelink">${study.url}</a></td>
 						<td>${study.uper}</td>
 					</tr>
 				  </c:forEach>

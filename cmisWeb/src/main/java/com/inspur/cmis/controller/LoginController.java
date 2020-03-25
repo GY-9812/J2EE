@@ -35,6 +35,8 @@ public class LoginController {
 		if(null!=checkUser){
 			mv.addObject("success","恭喜，登录成功!");
 			//mv.addObject("user",checkUser);
+			String uname=checkUser.getUsername();
+			session.setAttribute("uname", uname);
 			session.setAttribute("user", checkUser);
 			mv.setViewName("main.jsp");
 		}else{

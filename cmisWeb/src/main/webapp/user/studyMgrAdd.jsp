@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt"%>
 <%
 	String path = request.getContextPath();
 	String basePath = request.getScheme() + "://"
@@ -54,13 +55,14 @@
 			<li><a href="#">添加</a></li>
 		</ul>
 	</div>
-	<form action="<%=basePath%>addStudy" method="post" onsubmit="return toValid()">
+	<form action="<%=basePath%>addStudy" method="post" onsubmit="return toValid()" enctype="multipart/form-data">
 		<div class="formbody">
 			<div class="formtitle">
 				<span>学习园地资料管理</span>
 			</div>
 			<font color="green">${success}</font>
 			<c:if test="${flag!='1'}">
+			<input type="hidden" name="uper" value="${uname}">
 			<ul class="forminfo">
 				<li><label>资料名称</label><input name="name" type="text" class="dfinput" id="name"/></li>
 				<li><label>完全公开</label><cite>
@@ -74,8 +76,8 @@
 							<option value="4">客户营销技巧</option>
 					</select></cite></li>
 				<li><label>资料描述</label>
-				<textarea name="des" class="textinput"></textarea></li>
-				<li><label>附件上传</label><input name="url" type="file" class="dfinputfile" /></li>
+					<textarea name="des" class="textinput"></textarea></li>
+				<li><label>附件上传</label><input name="upload" type="file"/></li>
 				<li><label>&nbsp;</label>
 					<input type="submit" class="btn" value="添加" />&nbsp;&nbsp;&nbsp;&nbsp;
 					<input type="reset" class="btn" value="重置" /></li>
@@ -94,8 +96,8 @@
 							<option value="4" <c:if test="${member.type eq '4' }">selected</c:if>>客户营销技巧</option>
 					</select></cite></li>
 				<li><label>资料描述</label>
-				<textarea name="des" class="textinput" readonly>${member.des}</textarea></li>
-				<li><label>附件</label><input name="url" type="file" class="dfinputfile" value="${member.url}" readonly/></li>
+					<textarea name="des" class="textinput" readonly>${member.des}</textarea></li>
+				<li><label>附件</label><a href="#">${member.url}</a></td>
 			</ul>
 			</c:if>
 		</div>
