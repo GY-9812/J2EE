@@ -33,4 +33,34 @@
 	<select id="getUserName" parameterType="int" resultType="String">
 		select CNAME from yc_member where MEM_ID=#{cmid}
 	</select>
+	
+	<!--添加客户信息-->
+	<insert id="addClient" parameterType="client" >
+		insert into gzcrm_cinfo(C_CM_ID,C_SSN,C_NAME,C_TEL,C_SALARY,C_BALANCE,C_DEBT,C_BUSINESS,C_UNIT,C_ADD) 
+     	values(#{cmid},#{ssn},#{clientname},#{tel},#{salary},#{balance},#{debt},#{business},#{unit},#{address})
+	</insert>
+	
+	<!-- 校验客户身份证号码是否已存在 -->
+	<select id="getClientBySsn" parameterType="String" resultMap="BaseResultMap">
+		select * from gzcrm_cinfo where C_SSN=#{ssn}
+	</select>
+  
+	<!--根据key查询客户信息-->
+	<select id="getClientBykey" parameterType="int" resultMap="BaseResultMap">
+		select * from gzcrm_cinfo where C_KEY=#{key}
+	</select>
+	
+	<!--修改客户信息-->
+	<update id="updateClient" parameterType="client">
+		update gzcrm_cinfo set C_SSN=#{ssn},C_NAME=#{clientname},C_TEL=#{tel},C_SALARY=#{salary},C_BALANCE=#{balance}, 
+		C_DEBT=#{debt},C_BUSINESS=#{business},C_UNIT=#{unit},C_ADD=#{address} where C_KEY=#{key}
+	</update>
+  
+	<!--客户的批量删除-->
+	<delete id="deleteClient" parameterType="int[]">
+		delete from gzcrm_cinfo where C_KEY in
+		<foreach collection="array" item="keys" open="(" close=")" separator="," index="no">
+			#{keys}
+		</foreach>
+	</delete>
 </mapper>

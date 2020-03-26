@@ -10,4 +10,9 @@ import com.inspur.cmis.pojo.Client;
 public interface ClientService {
 	public List<Client> getClientList(Map<String,String> map);
 	public String getUserName(int cmid);
+	public void addClient(Client client);
+	public List<Client> getClientBySsn(String ssn);
+	public Client getClientBykey(int key);
+	public void updateClient(Client client);
+	public void deleteClient(int keys[]);
 }

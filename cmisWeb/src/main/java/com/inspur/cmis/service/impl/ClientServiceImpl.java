@@ -22,4 +22,24 @@ public class ClientServiceImpl implements ClientService{
 	public String getUserName(int cmid) {
 		return clientMapper.getUserName(cmid);
 	}
+	@Override
+	public void addClient(Client client) {
+		clientMapper.addClient(client);
+	}
+	@Override
+	public List<Client> getClientBySsn(String ssn) {
+		return clientMapper.getClientBySsn(ssn);
+	}
+	@Override
+	public Client getClientBykey(int key) {
+		return clientMapper.getClientBykey(key);
+	}
+	@Override
+	public void updateClient(Client client) {
+		clientMapper.updateClient(client);
+	}
+	@Override
+	public void deleteClient(int[] keys) {
+		clientMapper.deleteClient(keys);
+	}
 }

@@ -15,9 +15,36 @@
 <link href="<%=basePath%>css/style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<%=basePath%>js/jquery.js"></script>
 <script type="text/javascript">
+	function modifyClient(){
+		var $ids=[];     //定义一个空数组
+		var $chkBoxes=$('#clientTable').find('input:checked'); //找到选中的checkBox集
+		if ($chkBoxes.length==0){   //如果不选会弹出警告框
+			alert('请选择一个数据！');
+			return false;
+		}
+		if ($chkBoxes.length>1){   //如果选择多于一个会弹出警告框
+			alert('最多只能选择一个数据！');
+			return false;
+		}
+		//遍历被选中的数据集
+		$($chkBoxes).each(function(){
+			$ids.push($(this).attr('data-id'));
+		})
+		window.location="<%=basePath%>modifyClient?key="+$ids[0];
+	}
 	function confirmMsgDel() {
-		if (confirm("删除客户信息,您确定要删除吗?"))
-			window.close();
+		var ids="";
+		var $chkBoxes=$('#clientTable').find('input:checked'); //找到选中的checkBox集
+		if ($chkBoxes.length==0){   //如果不选会弹出警告框
+			alert('请至少选择一个数据！');
+			return false;
+		}
+		//遍历被选中的数据集
+		$($chkBoxes).each(function(){
+			ids+=$(this).attr('data-id')+",";
+		})
+		if (confirm("删除用户信息,您确定要删除吗?"))
+			window.location="<%=basePath%>deleteClient?keys="+ids;
 	}
 	function gotoPage(pn){
 		//alert("pn===="+pn);
@@ -53,7 +80,7 @@
 	<div class="place">
 		<span>位置：</span>
 		<ul class="placeul">
-			<li><a href="#">客户信息管理</a></li>
+			<li><a href="<%=basePath %>clientInfoList">客户信息管理</a></li>
 		</ul>
 	</div>
 	<form action="clientInfoList" method="post" name="form1">
@@ -70,13 +97,13 @@
 				<ul class="toolbar1">
 					<li><a href="<%=basePath%>user/clientInfoAdd.jsp"><span><img
 								src="<%=basePath%>images/t01.png" /></span>添加</a></li>
-					<li><a href="<%=basePath%>user/clientInfoUpdate.jsp"><span><img
+					<li><a href="javascript:modifyClient()"><span><img
 								src="<%=basePath%>images/t02.png" /></span>修改</a></li>
 					<li><a href="javascript:confirmMsgDel()"><span><img
 								src="<%=basePath%>images/t03.png" /></span>删除</a></li>
 				</ul>
 			</div>
-			<table class="tablelist">
+			<table class="tablelist" id="clientTable">
 				<thead>
 					<tr class="tablehead">
 						<td colspan="11">客户信息列表</td>
