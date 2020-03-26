@@ -67,8 +67,8 @@ $(function(){
 	    </div>
 	    	<ul class="menuson">
 	        <li><cite></cite><a href="regularMeetList" target="rightFrame">例会管理</a><i></i></li>
-	        <li><cite></cite><a href="user/workMgr.jsp" target="rightFrame">工作管理</a><i></i></li>
-	        </ul>    
+	        <li><cite></cite><a href="workList" target="rightFrame">工作管理</a><i></i></li>
+	        </ul>
 	   </dd>
 	   <dd>
 	    <div class="title">

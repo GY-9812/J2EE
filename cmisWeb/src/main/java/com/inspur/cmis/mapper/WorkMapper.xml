@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inspur.cmis.mapper.WorkMapper">
+	<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.Work">
+		<result column="CM_KEY" property="key" />
+		<result column="CM_ID" property="cmid" />
+		<result column="CM_MANAGEMENT" property="manage" />
+		<result column="CM_PRODUCT" property="product" />
+		<result column="CM_LOAN" property="loan" />
+		<result column="CM_WARNING" property="warn" />
+		<result column="CM_ISSUE" property="issue" />
+		<result column="CM_WORK_PROPOSAL" property="proposal" />
+		<result column="CM_DATE" property="date" />
+	</resultMap>
+	
+	<!--默认查询、根据条件查询工作信息-->
+	<select id="getWorkList" parameterType="Map" resultMap="BaseResultMap">
+		select * from gzcrm_cminfo_work where 1=1
+		<if test="cmid!=null and cmid!=''">
+			and CM_ID=${cmid}
+		</if>
+		<if test="date!=null and date!=''">
+			and CM_DATE like '%' #{date} '%'
+		</if>
+	</select>
+  
+	<!--添加工作信息-->
+	<insert id="addWork" parameterType="work">
+		insert into gzcrm_cminfo_work(CM_ID,CM_MANAGEMENT,CM_PRODUCT,CM_LOAN,CM_WARNING,CM_ISSUE,CM_WORK_PROPOSAL,CM_DATE) 
+     						values(#{cmid},#{manage},#{product},#{loan},#{warn},#{issue},#{proposal},#{date})
+	</insert>
+
+	<!-- 根据key查询工作信息-->
+	<select id="getWorkByKey" parameterType="int" resultMap="BaseResultMap">
+		select * from gzcrm_cminfo_work where CM_KEY=#{key}
+	</select>
+	
+	<!--修改工作信息-->
+	<update id="updateWork" parameterType="work">
+		update gzcrm_cminfo_work set CM_MANAGEMENT=#{manage},CM_PRODUCT=#{product},CM_LOAN=#{loan},
+		CM_WARNING=#{warn},CM_ISSUE=#{issue},CM_WORK_PROPOSAL=#{proposal},CM_DATE=#{date} where CM_KEY=#{key}
+	</update>
+
+	<!--工作信息的批量删除 -->
+	<delete id="deleteWork" parameterType="int[]">
+		delete from gzcrm_cminfo_work where CM_KEY in
+		<foreach collection="array" item="keys" open="(" close=")" separator="," index="no">
+			#{keys}
+		</foreach>
+	</delete>
+</mapper>
