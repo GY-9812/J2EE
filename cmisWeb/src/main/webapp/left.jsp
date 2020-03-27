@@ -58,7 +58,7 @@ $(function(){
 	    </div>
 	    	<ul class="menuson">
 	        <li><cite></cite><a href="clientInfoList" target="rightFrame">客户信息管理</a><i></i></li>
-	        <li><cite></cite><a href="user/marketRecord.jsp" target="rightFrame">营销记录管理</a><i></i></li>
+	        <li><cite></cite><a href="marketList" target="rightFrame">营销记录管理</a><i></i></li>
 	        </ul>    
 	    </dd>
 	   <dd>

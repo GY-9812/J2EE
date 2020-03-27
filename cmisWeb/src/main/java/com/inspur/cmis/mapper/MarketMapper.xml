@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.inspur.cmis.mapper.MarketMapper" >
+	<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.Market" >
+		<result column="C_KEY" property="key"/>
+		<result column="C_CM_ID" property="cmid"/>
+		<result column="C_NAME" property="clientname"/>
+		<result column="C_MANAGEMENT" property="management"/>
+		<result column="C_DEMAND" property="demand"/>
+		<result column="C_REPORT" property="report"/>
+		<result column="C_TESTIMONIALS" property="test"/>
+		<result column="C_EVALUATION" property="eval"/>
+		<result column="C_DATE" property="date"/>
+		<result column="C_ID" property="cid"/>
+	</resultMap>
+  
+ 	<!--默认查询、根据条件查询营销记录-->
+	<select id="getMarketList" parameterType="Map" resultMap="BaseResultMap">
+		select * from gzcrm_cmarketing_record where 1=1
+		<if test="cmid!=null and cmid!=''">
+			and C_CM_ID=${cmid}
+		</if>
+		<if test="clientname!=null and clientname!=''">
+			and C_NAME like '%' #{clientname} '%'
+		</if>
+	</select>
+  
+	<!--根据客户姓名clientname查询客户id-->
+	<select id="getCidByCname" parameterType="String" resultType="int">
+		select C_KEY from gzcrm_cinfo where C_NAME=#{clientname}
+	</select>
+  
+	<!--添加营销记录-->
+	<insert id="addMarket" parameterType="market" >
+		insert into gzcrm_cmarketing_record(C_CM_ID,C_NAME,C_MANAGEMENT,C_DEMAND,C_REPORT,C_TESTIMONIALS,C_EVALUATION,C_DATE,C_ID) 
+     						values(#{cmid},#{clientname},#{management},#{demand},#{report},#{test},#{eval},#{date},#{cid})
+	</insert>
+	
+	<!--检查客户名是否存在，只有存在才能添加-->
+	<select id="getClientByClientName" parameterType="String" resultMap="BaseResultMap">
+		select * from gzcrm_cinfo where C_NAME=#{clientname}
+	</select>
+  
+	<!-- 根据key查询营销记录-->
+	<select id="getMarketBykey" parameterType="int" resultMap="BaseResultMap">
+		select * from gzcrm_cmarketing_record where C_KEY=#{key}
+	</select>
+	
+	<!--修改营销记录-->
+	<update id="updateMarket" parameterType="market">
+		update gzcrm_cmarketing_record set C_NAME=#{clientname},C_MANAGEMENT=#{management},C_DEMAND=#{demand},C_REPORT=#{report},
+				C_TESTIMONIALS=#{test},C_EVALUATION=#{eval},C_DATE=#{date},C_ID=#{cid} where C_KEY=#{key}
+	</update>
+  
+	<!--营销记录的批量删除 -->
+	<delete id="deleteMarket" parameterType="int[]">
+		delete from gzcrm_cmarketing_record where C_KEY in
+		<foreach collection="array" item="keys" open="(" close=")" separator="," index="no">
+			#{keys}
+		</foreach>
+	</delete>
+</mapper>
