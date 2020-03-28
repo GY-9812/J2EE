@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.inspur.cmis.mapper.ClientMgrMapper">
+	<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.ClientManager">
+    	<result column="CM_ID" property="cmid"/>
+    	<result column="CM_NAME" property="cname"/>
+    	<result column="CM_SEX" property="sex"/>
+	    <result column="CM_SSN" property="ssn"/>
+	    <result column="CM_BIRTHDAY" property="birthday"/>
+	    <result column="CM_AGE" property="age"/>
+	    <result column="CM_NATION" property="nation"/>
+	    <result column="CM_POLITICAL_LANDSCAPE" property="political"/>
+	    <result column="CM_HOMETOWN" property="homeTown"/>
+	    <result column="CM_PHOTO" property="photo"/>
+	    <result column="CM_EDUCATION" property="education"/>
+	    <result column="CM_DEGREE" property="degree"/> 
+	    <result column="CM_STATUS" property="status"/>
+	    <result column="CM_GRADUATED" property="graduation"/>
+	    <result column="CM_PROFESSIONAL_TITLES" property="professional"/>
+	    <result column="CM_HIREDATE" property="hireDate" />
+	    <result column="CM_ENTRY_TIME" property="entryDate"/>
+	    <result column="CM_FINANCIAL_YEARS" property="financeYears"/>
+	    <result column="CM_WORKING_YEARS" property="workYears"/>
+	    <result column="CM_EXIT_TIME" property="exitTime"/>
+	    <result column="CM_RESULTS_LAST_YEAR" property="lastResult"/>
+	    <result column="CM_YEAR_CREDITS" property="yearCredits"/>
+	    <result column="CM_TOTAL_CREDITS" property="totalCredits"/>
+	    <result column="CM_LEVEL" property="level"/>
+	    <result column="CM_UNIT" property="unit"/>
+	    <result column="CM_DEPT" property="dept"/>
+	    <result column="CM_POSITION" property="position"/>
+	    <result column="CM_TEL" property="tel"/>
+	    <result column="CM_MOBILE" property="mobile"/>
+	    <result column="CM_BUSINESS_LINES" property="line"/>
+	    <result column="CM_CERTIFICATE_NUMBER" property="certNumber"/>
+	    <result column="CM_QUALIFICATION_DATE" property="certDate"/>
+	    <result column="CM_QUALIFICATION_PERIOD" property="certPeriod"/>
+	    <result column="CM_STATUS_NUMBER" property="postNumber"/>
+	    <result column="CM_STATUS_NUMBER_DATE" property="postDate"/> 
+	    <result column="CM_STATUS_NUMBER_PERIOD" property="postPeriod"/> 
+	    <result column="CM_LEVEL_NUMBER" property="levleNumber"/>
+	    <result column="CM_LEVEL_DATE" property="levleDate"/>
+	    <result column="CM_LEVEL_PERIOD " property="levlePeriod"/>
+	    <result column="CM_MODIFICATION_DATE" property="modifyDate"/>
+	    <result column="CM_MODIFICATION_PERSON" property="modifier"/>
+	</resultMap>
+	
+	<!--客户经理的默认查询、条件查询-->
+	<select id="getClientMgrList" parameterType="Map" resultMap="BaseResultMap">
+		select * from gzcrm_cminfo where 1=1
+		<if test="unit!=null and unit!= '' ">
+	       and CM_UNIT like '%' #{unit} '%'
+	    </if>
+	    <if test="cmid!= null and cmid!=''">
+	       and CM_ID=${cmid}
+	    </if>
+	    <if test="cname != null and cname !=''">
+	       and CM_NAME like '%' #{cname} '%'
+	    </if>
+	    <if test="status != null and status !=''">
+	       and CM_STATUS=#{status}
+	    </if>
+	</select>
+	
+	<!--添加客户经理信息-->
+	<insert id="addMgr" parameterType="clientManager">
+	    insert into gzcrm_cminfo(CM_NAME,CM_SEX,CM_SSN,CM_BIRTHDAY,CM_AGE,CM_NATION,CM_POLITICAL_LANDSCAPE,CM_HOMETOWN,
+	    CM_EDUCATION,CM_DEGREE,CM_GRADUATED,CM_PROFESSIONAL_TITLES,CM_HIREDATE,CM_ENTRY_TIME,CM_FINANCIAL_YEARS,CM_WORKING_YEARS,
+	    CM_TEL,CM_MOBILE,CM_UNIT,CM_DEPT,CM_LEVEL,CM_POSITION,CM_PHOTO,CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON)
+	    values(#{cname},#{sex},#{ssn},#{birthday},#{age},#{nation},#{political}, #{homeTown},
+	    #{education},#{degree},#{graduation},#{professional},#{hireDate},#{entryDate},#{financeYears},#{workYears},
+	    #{tel},#{mobile},#{unit},#{dept},#{level},#{position},#{photo},#{modifyDate},#{modifier})
+	</insert>
+	
+	<!--查询客户经理信息、详细信息-->
+	<select id="getClientMgr" parameterType="String" resultMap="BaseResultMap" >
+		select * from gzcrm_cminfo where CM_ID=#{cmid}
+	</select>
+	
+	<!--删除客户经理信息-->
+	<delete id="deleteMgr" >
+		delete from gzcrm_cminfo where CM_ID in
+        <foreach collection="array" item="ids" index="no" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+	</delete>
+	
+	<!--根据条件查询客户经理信息以供导出使用-->
+	<select id="exportExcel" parameterType="HashMap" resultType="java.util.Map">
+		select CM_ID cmid,CM_NAME cname,CM_SSN ssn,CM_SEX sex,CM_BIRTHDAY birthday,CM_AGE age,CM_NATION nation,
+		CM_POLITICAL_LANDSCAPE political,CM_HOMETOWN homeTown,CM_EDUCATION education,CM_DEGREE degree,CM_GRADUATED graduation,
+		CM_HIREDATE hireDate,CM_ENTRY_TIME entryDate,CM_TEL tel,CM_MOBILE mobile, CM_LEVEL level,CM_UNIT unit,CM_DEPT dept 
+	    from gzcrm_cminfo where 1=1
+	    <if test="unit!=null and unit!= '' ">
+	       and CM_UNIT like '%' #{unit} '%'
+	    </if>
+	    <if test="cmid!= null and cmid!=''">
+	       and CM_ID=${cmid}
+	    </if>
+	    <if test="cname != null and cname !=''">
+	       and CM_NAME like '%' #{cname} '%'
+	    </if>
+	    <if test="status != null and status !=''">
+	       and CM_STATUS=#{status}
+	    </if>
+	</select>
+</mapper>
