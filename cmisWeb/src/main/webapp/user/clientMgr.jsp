@@ -21,6 +21,24 @@
 <script type="text/javascript" src="<%=basePath%>editor/kindeditor.js"></script>
 
 <script type="text/javascript">
+	function modifyClientMgr(){
+		var $ids=[];     //定义一个空数组
+		var $chkBoxes=$('#clientMgrTable').find('input:checked'); //找到选中的checkBox集
+		if ($chkBoxes.length==0){   //如果不选会弹出警告框
+			alert('请选择一个数据！');
+			return false;
+		}
+		if ($chkBoxes.length>1){   //如果选择多于一个会弹出警告框
+			alert('最多只能选择一个数据！');
+			return false;
+		}
+		//遍历被选中的数据集
+		$($chkBoxes).each(function(){
+			$ids.push($(this).attr('data-id'));
+		})
+		window.location="<%=basePath%>modifyClientMgr?key="+$ids[0];
+	}
+	
 	function confirmMsgDel()
 	{  
 		var ids="";
@@ -36,13 +54,15 @@
 	    ids = ids.substr(0,ids.length-1);
 		if (confirm("您确定要删除选中的用户信息吗?"))
 			 window.location="<%=basePath%>deleteMgr?cmid="+ids; 
-	} 
+	}
+	
 	function exportMsg()
 	{  
 	   if(confirm("您确定要导出吗?"))
 	     window.location.href = "<%=basePath%>exportExcel";
 	     
-	} 
+	}
+	
 	function deleteMgr(cmid){
 		 if(confirm("删除客户经理信息,您确定要删除吗?")){
 			 window.location="<%=basePath%>deleteMgr?cmid="+cmid;
@@ -117,8 +137,8 @@
 	    			<div class="vocation">
 	    				<select class="select1" name="status">
 	    					<option value="">请选择</option>
-	    					<option value="1" <c:if test="${status=='1'}">selected</c:if>>在职</option>
-	    					<option value="2" <c:if test="${status=='2'}">selected</c:if>>退出</option>
+	    					<option value="T" <c:if test="${status=='1'}">selected</c:if>>在职</option>
+	    					<option value="F" <c:if test="${status=='2'}">selected</c:if>>退出</option>
 	    				</select>
 					</div></li>
 				<li><label>&nbsp;</label><input type="submit" class="scbtn" value="查询" /></li>
@@ -129,7 +149,7 @@
 				<ul class="toolbar1">
 					<li><a href="<%=basePath%>toMgrAdd"><span><img 
 								src="<%=basePath%>images/t01.png"/></span>添加</a></li>
-	        		<li><a href="clientMgrUpdate.html"><span><img 
+	        		<li><a href="javascript:modifyClientMgr()"><span><img 
 	        					src="<%=basePath%>images/t02.png"/></span>修改</a></li>
 	        		<li><a href="javascript:confirmMsgDel()" ><span><img 
 	        					src="<%=basePath%>images/t03.png"/></span>删除</a></li>
@@ -160,7 +180,7 @@
 				<tbody>
 				  <c:forEach items="${pageInfo.list}" var="mgr">
 				  	<tr>
-						<td><input name="mgr_ids" data-id="${mgr.cmid}" type="checkbox" value="${mgr.cmid}" /></td>
+						<td><input name="cmid" data-id="${mgr.cmid}" type="checkbox" value="${mgr.cmid}"/></td>
 				        <td>${mgr.cmid}</td>
 				        <td>${mgr.cname}</td>
 				        <td><c:if test="${mgr.sex=='F'}">女</c:if>

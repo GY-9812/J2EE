@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import com.inspur.cmis.pojo.ClientManager;
 @Resource
 public interface ClientMgrService {
@@ -14,4 +12,6 @@ public interface ClientMgrService {
 	public void addMgr(ClientManager clientMgr);
 	public ClientManager getClientMgr(String cmid);
 	public void deleteMgr(String cmid[]);
+	public ClientManager getClientMgrByCmid(int key);
+	public void updateClientMgr(ClientManager mgr);
 }

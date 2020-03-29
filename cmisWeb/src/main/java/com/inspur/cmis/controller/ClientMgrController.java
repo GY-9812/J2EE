@@ -146,11 +146,11 @@ public class ClientMgrController {
 		
 		//获取当前时间
 		Date today = new Date();
-		mgr.setStatus("1");
+		mgr.setStatus("T");
 		mgr.setModifyDate(today);
 		clientMgrService.addMgr(mgr);
 		
-		// 同时初始化一条用户信息
+		//同时初始化一条用户信息
 		User user = new User();
 		user.setUsername(mgr.getCname());
 		user.setSex(mgr.getSex());
@@ -167,7 +167,7 @@ public class ClientMgrController {
 		user.setLastTime(time);
 		userService.addUserInfo(user);
 
-		model.addAttribute("message", "添加客户经理成功！");
+		model.addAttribute("success", "添加客户经理成功！");
 		model.addAttribute("flag", "1");
 		model.addAttribute("mgr", mgr);
 		return "/user/clientMgrAdd.jsp";
@@ -385,5 +385,84 @@ public class ClientMgrController {
 		} finally {
 			//workbook.();
 		}
+	}
+	
+	/**
+	 * 通过客户经理id获取客户经理信息
+	 */
+	@RequestMapping("/modifyClientMgr")
+	public String modifyClientMgr(String key,Model model){
+		int key1=Integer.parseInt(key);
+		ClientManager mgr=clientMgrService.getClientMgrByCmid(key1);
+		model.addAttribute("mgr", mgr);
+		return "user/clientMgrUpdate.jsp";
+	}
+	
+	/**
+	 * 修改客户经理信息
+	 */
+	@RequestMapping("/updateClientMgr")
+	public String updateClientMgr(ClientManager mgr, MultipartFile pic,HttpServletRequest req, Model model) {
+		String uploadFile_name = "";
+		String newFileName = "";
+		try {// 原始文件名称
+			if (pic != null) {
+				uploadFile_name = pic.getOriginalFilename();
+				// 新文件名称
+				if (!"".equals(uploadFile_name))
+					newFileName = UUID.randomUUID().toString()
+							+ uploadFile_name.substring(uploadFile_name
+									.lastIndexOf("."));
+				// 上传图片物理路径
+				String url = req.getSession().getServletContext()
+						.getRealPath("/images/upload");
+				File uploadfile = new java.io.File(url + "/" + newFileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				pic.transferTo(uploadfile);
+			}
+
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(newFileName!=""){
+			mgr.setPhoto(newFileName);
+		}
+		Date today=new Date();
+		mgr.setModifyDate(today);
+		
+		clientMgrService.updateClientMgr(mgr);
+		
+		//同时修改一条用户信息
+		User user = userService.getUserByUserId(mgr.getCmid());
+		if (mgr.getCname()!=""&&mgr.getCname()!=null) {
+			user.setUsername(mgr.getCname());
+		}
+		if (mgr.getSex()!=""&&mgr.getSex()!=null) {
+			user.setSex(mgr.getSex());
+		}
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String birthday = format.format(mgr.getBirthday());
+		if (birthday!=""&&birthday!=null) {
+			user.setBirthday(birthday);
+		}
+		if (mgr.getStatus()!=""&&mgr.getStatus()!=null) {
+			user.setIsEnable("T");
+		}
+		String time = format.format(today);
+		user.setLastTime(time);
+		user.setRoleId(Constant.USER_ROLEID_MANAGER);
+		userService.updateUserInfo(user);
+		
+		model.addAttribute("success", "修改客户成功！");
+		model.addAttribute("mgr", mgr);
+		model.addAttribute("flag", "1");
+		
+		return "/user/clientMgrUpdate.jsp";
 	}
 }

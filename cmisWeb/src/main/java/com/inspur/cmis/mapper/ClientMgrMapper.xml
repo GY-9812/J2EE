@@ -67,7 +67,7 @@
 	    insert into gzcrm_cminfo(CM_NAME,CM_SEX,CM_SSN,CM_BIRTHDAY,CM_AGE,CM_NATION,CM_POLITICAL_LANDSCAPE,CM_HOMETOWN,CM_EDUCATION,
 	    CM_DEGREE,CM_STATUS,CM_GRADUATED,CM_PROFESSIONAL_TITLES,CM_HIREDATE,CM_ENTRY_TIME,CM_FINANCIAL_YEARS,CM_WORKING_YEARS,
 	    CM_TEL,CM_MOBILE,CM_UNIT,CM_DEPT,CM_LEVEL,CM_POSITION,CM_BUSINESS_LINES,CM_PHOTO,CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON)
-	    values(#{cname},#{sex},#{ssn},#{birthday},#{age},#{nation},#{political}, #{homeTown},#{education},
+	    values(#{cname},#{sex},#{ssn},#{birthday},#{age},#{nation},#{political},#{homeTown},#{education},
 	    #{degree},#{status},#{graduation},#{professional},#{hireDate},#{entryDate},#{financeYears},#{workYears},
 	    #{tel},#{mobile},#{unit},#{dept},#{level},#{position},#{line},#{photo},#{modifyDate},#{modifier})
 	</insert>
@@ -84,4 +84,19 @@
 			#{ids}
 		</foreach>
 	</delete>
+	
+	<!--根据cmid查询客户信息-->
+	<select id="getClientMgrByCmid" parameterType="int" resultMap="BaseResultMap">
+		select * from gzcrm_cminfo where CM_ID=#{cmid}
+	</select>
+	
+	<!--修改客户信息-->
+	<update id="updateClientMgr" parameterType="clientManager">
+		update gzcrm_cminfo set CM_NAME=#{cname},CM_SEX=#{sex},CM_SSN=#{ssn},CM_BIRTHDAY=#{birthday},CM_AGE=#{age},CM_NATION=#{nation},
+		CM_POLITICAL_LANDSCAPE=#{political},CM_HOMETOWN=#{homeTown},CM_EDUCATION=#{education},CM_DEGREE=#{degree},CM_STATUS=#{status},
+		CM_GRADUATED=#{graduation},CM_PROFESSIONAL_TITLES=#{professional},CM_HIREDATE=#{hireDate},CM_ENTRY_TIME=#{entryDate},
+		CM_FINANCIAL_YEARS=#{financeYears},CM_WORKING_YEARS=#{workYears},CM_TEL=#{tel},CM_MOBILE=#{mobile},CM_UNIT=#{unit},
+		CM_DEPT=#{dept},CM_LEVEL=#{level},CM_POSITION=#{position},CM_BUSINESS_LINES=#{line},CM_PHOTO=#{photo},
+		CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier} where CM_ID=#{cmid}
+	</update>
 </mapper>

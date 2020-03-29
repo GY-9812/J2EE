@@ -12,4 +12,6 @@ public interface ClientMgrMapper {
 	public void addMgr(ClientManager clientMgr);
 	public ClientManager getClientMgr(String mgrId);
 	public void deleteMgr(String cmId[]);
+	public ClientManager getClientMgrByCmid (int key);
+	public void updateClientMgr(ClientManager mgr);
 }

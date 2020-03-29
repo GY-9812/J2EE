@@ -35,4 +35,14 @@ public class ClientMgrServiceImpl implements ClientMgrService{
 	public void deleteMgr(String[] cmid) {
 		clientMgrMapper.deleteMgr(cmid);
 	}
+
+	@Override
+	public ClientManager getClientMgrByCmid(int key) {
+		return clientMgrMapper.getClientMgrByCmid(key);
+	}
+
+	@Override
+	public void updateClientMgr(ClientManager mgr) {
+		clientMgrMapper.updateClientMgr(mgr);
+	}
 }
