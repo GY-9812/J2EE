@@ -58,18 +58,18 @@
 	       and CM_NAME like '%' #{cname} '%'
 	    </if>
 	    <if test="status != null and status !=''">
-	       and CM_STATUS=#{status}
+	       and CM_STATUS=${status}
 	    </if>
 	</select>
 	
 	<!--添加客户经理信息-->
 	<insert id="addMgr" parameterType="clientManager">
-	    insert into gzcrm_cminfo(CM_NAME,CM_SEX,CM_SSN,CM_BIRTHDAY,CM_AGE,CM_NATION,CM_POLITICAL_LANDSCAPE,CM_HOMETOWN,
-	    CM_EDUCATION,CM_DEGREE,CM_GRADUATED,CM_PROFESSIONAL_TITLES,CM_HIREDATE,CM_ENTRY_TIME,CM_FINANCIAL_YEARS,CM_WORKING_YEARS,
-	    CM_TEL,CM_MOBILE,CM_UNIT,CM_DEPT,CM_LEVEL,CM_POSITION,CM_PHOTO,CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON)
-	    values(#{cname},#{sex},#{ssn},#{birthday},#{age},#{nation},#{political}, #{homeTown},
-	    #{education},#{degree},#{graduation},#{professional},#{hireDate},#{entryDate},#{financeYears},#{workYears},
-	    #{tel},#{mobile},#{unit},#{dept},#{level},#{position},#{photo},#{modifyDate},#{modifier})
+	    insert into gzcrm_cminfo(CM_NAME,CM_SEX,CM_SSN,CM_BIRTHDAY,CM_AGE,CM_NATION,CM_POLITICAL_LANDSCAPE,CM_HOMETOWN,CM_EDUCATION,
+	    CM_DEGREE,CM_STATUS,CM_GRADUATED,CM_PROFESSIONAL_TITLES,CM_HIREDATE,CM_ENTRY_TIME,CM_FINANCIAL_YEARS,CM_WORKING_YEARS,
+	    CM_TEL,CM_MOBILE,CM_UNIT,CM_DEPT,CM_LEVEL,CM_POSITION,CM_BUSINESS_LINES,CM_PHOTO,CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON)
+	    values(#{cname},#{sex},#{ssn},#{birthday},#{age},#{nation},#{political}, #{homeTown},#{education},
+	    #{degree},#{status},#{graduation},#{professional},#{hireDate},#{entryDate},#{financeYears},#{workYears},
+	    #{tel},#{mobile},#{unit},#{dept},#{level},#{position},#{line},#{photo},#{modifyDate},#{modifier})
 	</insert>
 	
 	<!--查询客户经理信息、详细信息-->
@@ -84,24 +84,4 @@
 			#{ids}
 		</foreach>
 	</delete>
-	
-	<!--根据条件查询客户经理信息以供导出使用-->
-	<select id="exportExcel" parameterType="HashMap" resultType="java.util.Map">
-		select CM_ID cmid,CM_NAME cname,CM_SSN ssn,CM_SEX sex,CM_BIRTHDAY birthday,CM_AGE age,CM_NATION nation,
-		CM_POLITICAL_LANDSCAPE political,CM_HOMETOWN homeTown,CM_EDUCATION education,CM_DEGREE degree,CM_GRADUATED graduation,
-		CM_HIREDATE hireDate,CM_ENTRY_TIME entryDate,CM_TEL tel,CM_MOBILE mobile, CM_LEVEL level,CM_UNIT unit,CM_DEPT dept 
-	    from gzcrm_cminfo where 1=1
-	    <if test="unit!=null and unit!= '' ">
-	       and CM_UNIT like '%' #{unit} '%'
-	    </if>
-	    <if test="cmid!= null and cmid!=''">
-	       and CM_ID=${cmid}
-	    </if>
-	    <if test="cname != null and cname !=''">
-	       and CM_NAME like '%' #{cname} '%'
-	    </if>
-	    <if test="status != null and status !=''">
-	       and CM_STATUS=#{status}
-	    </if>
-	</select>
 </mapper>

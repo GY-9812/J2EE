@@ -116,7 +116,7 @@
 	    		<li><label>状态</label>  
 	    			<div class="vocation">
 	    				<select class="select1" name="status">
-	    					<option value="0">请选择</option>
+	    					<option value="">请选择</option>
 	    					<option value="1" <c:if test="${status=='1'}">selected</c:if>>在职</option>
 	    					<option value="2" <c:if test="${status=='2'}">selected</c:if>>退出</option>
 	    				</select>
@@ -175,7 +175,7 @@
 				        </td>
 				        <td>${mgr.unit}</td>
 				        <td>${mgr.dept}</td>
-				        <td><a href="<%=basePath%>clientMgrInfo?cmid=${mgr.cmid}" class="tablelink">查看</a> 
+				        <td><a href="<%=basePath%>clientMgr?cmid=${mgr.cmid}" class="tablelink">查看</a> 
 				            <a href="javascript:deleteMgr('${mgr.cmid}')" class="tablelink"> 删除</a>
 				        </td>
 				    </tr> 

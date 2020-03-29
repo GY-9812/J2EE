@@ -3,10 +3,10 @@
 <mapper namespace="com.inspur.cmis.mapper.ParamMapper">
 	<!--根据参数代码参数类型代码查询参数名称-->
 	<select id="getParamName" parameterType="java.util.Map" resultType="String">
-		select paramName from yc_param where paramType=#{paramType} and paramCode=#{paramCode}
+		select PARAMNAME from yc_param where PARAMTYPE=#{paramType} and PARAMCODE=#{paramCode}
 	</select>
 	<!--根据参数类型代码获取对应的参数信息-->
 	<select id="getParamList" parameterType="String" resultType="param">
-		select * from yc_param where paramType=#{paramType}
+		select * from yc_param where PARAMTYPE=#{paramType}
 	</select>
 </mapper>

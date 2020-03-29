@@ -14,6 +14,4 @@ public interface ClientMgrService {
 	public void addMgr(ClientManager clientMgr);
 	public ClientManager getClientMgr(String cmid);
 	public void deleteMgr(String cmid[]);
-	public List<HashMap<String,Object>> exportExcel(HashMap<String, Object> map);
-	public XSSFWorkbook exportExcelInfo(HashMap<String, Object> map) throws Exception;
 }

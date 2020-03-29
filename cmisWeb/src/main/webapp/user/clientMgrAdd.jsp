@@ -67,6 +67,7 @@
 	</div>
 	<form action="<%=basePath%>addMgr" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="modifyMemner" value="${user.userId}"/>
+		<input type="hidden" name="modifier" value="${uname}"/>
     	<div class="formbody">
     		<div class="formtitle"><span>客户经理基本信息</span></div>
    			<c:if test="${flag!='1'}">
@@ -79,22 +80,22 @@
 			    <li><label>年龄</label><input name="age" type="text" class="dfinput"/></li>
 			    <li><label>民族</label><cite>
 			           <select class="dfselect" name="nation">
-			                 <c:forEach items="${nationParam}" var="itemtype">
-								<option value="${itemtype.key}" >${itemtype.value }</option>		
+			                 <c:forEach items="${nationParam}" var="nation">
+								<option value="${nation.key}" >${nation.value }</option>		
 						    </c:forEach>
 						  </select>
 			           </cite></li>
 			    <li><label>政治面貌</label><cite>
 			             <select class="dfselect" name="political">
-			                 <c:forEach items="${policeStatus}" var="stutus">
-								<option value="${stutus.key }">
-									${stutus.value }
+			                 <c:forEach items="${policeStatus}" var="pol">
+								<option value="${pol.key }">
+									${pol.value }
 								</option>		
 						    </c:forEach>
 						 </select>
 						  </cite></li>
-			    <li><label>籍贯</label><input name="homeTown" type="text" class="dfinput"  value="山东济南"/></li>
-			    <li><label>照片</label><input name="pic" type="file" class="dfselect1"/>
+			    <li><label>籍贯</label><input name="homeTown" type="text" class="dfinput"  value=""/></li>
+			    <li><label>照片</label><input name="pic" type="file"/>
 			    </li>
 			    <li><label>学历</label><cite>  
 			       <select class="dfselect" name="education" >
@@ -130,26 +131,27 @@
 			    				<input type="reset" class="btn" value="重置"/></li>
     		</ul>
     		</c:if>
-    		<c:if test="${saveFlag=='1'}">
+    		<c:if test="${flag=='1'}">
     		<font color="green">${message}</font>
      		<ul class="forminfo">
 			    <li><label>姓名</label><cite>${mgr.cname}</cite></li>
-			    <li><label>性别</label><cite><input name="sex" type="radio" value="M"  <c:if test="${'M' eq mgr.sex }">checked="checked" </c:if>  />男&nbsp;&nbsp;&nbsp;&nbsp;
-				                           <input name="sex" type="radio" value="F" <c:if test="${'F' eq mgr.sex }">checked="checked" </c:if> />女</cite></li>
+			    <li><label>性别</label><cite>
+			    	<input name="sex" type="radio" value="M"  <c:if test="${'M' eq mgr.sex }">checked="checked" </c:if>/>男&nbsp;&nbsp;&nbsp;&nbsp;
+					<input name="sex" type="radio" value="F" <c:if test="${'F' eq mgr.sex }">checked="checked" </c:if> />女</cite></li>
 			    <li><label>身份证号</label><cite>${mgr.ssn}</cite></li>
 			    <li><label>出生年月</label><cite><fmt:formatDate type="date" value="${mgr.birthday }" /></cite></li>
 			    <li><label>年龄</label><cite>${mgr.age}</cite></li>
 			    <li><label>民族</label><cite>
 			        <select >
 			              <c:forEach items="${nationParam}" var="nation">
-								<option value="${nation.key }" <c:if test="${nation.key eq mgr.nation }">checked="checked" </c:if> >${nation.value }</option>		
+								<option value="${nation.key}" <c:if test="${nation.key eq mgr.nation}">selected</c:if>>${nation.value}</option>
 						  </c:forEach>
 			        </select>
 			    </cite></li>
 			    <li><label>政治面貌</label><cite>
 			          <select >
-			              <c:forEach items="${policeStatus}" var="status">
-								<option value="${status.key }" <c:if test="${status.key eq mgr.political }">checked="checked" </c:if> >${status.value }</option>		
+			              <c:forEach items="${policeStatus}" var="pol">
+								<option value="${pol.key}" <c:if test="${pol.key eq mgr.political}">selected</c:if>>${pol.value}</option>
 						  </c:forEach>
 			        </select>
 			        </cite>
@@ -157,29 +159,28 @@
 			    <li><label>籍贯</label><cite>${mgr.homeTown}</cite></li>
 			    <li><label>照片</label><cite><img alt="图片不存在" src="<%=basePath %>images/upload/${mgr.photo}" style="width:100px;height:100px"></cite></li> 
 			    <li><label>学历</label><cite>
-			       <select >
+			       <select>
 			              <c:forEach items="${education}" var="edu">
-								<option value="${edu.key }" <c:if test="${edu.key eq mgr.education }">checked="checked" </c:if> >${edu.value }</option>		
+								<option value="${edu.key}" <c:if test="${edu.key eq mgr.education}">selected</c:if>>${edu.value}</option>		
 						  </c:forEach>
 			        </select>
 			    </cite></li>
 			    <li><label>学位</label><cite>
 			     <select >
 			              <c:forEach items="${degree}" var="degree">
-								<option value="${degree.key }" <c:if test="${degree.key eq mgr.degree }">checked="checked" </c:if> >${degree.value }</option>		
+								<option value="${degree.key}" <c:if test="${degree.key eq mgr.degree}">selected</c:if>>${degree.value}</option>		
 						  </c:forEach>
 			        </select>
 			        </cite></li>
-			    <li><label>毕业院校及专业</label><cite>${mgr.graduation }</cite></li>
-			    <li><label>专业技术职称</label><cite>${mgr.professional }</cite></li>
+			    <li><label>毕业院校及专业</label><cite>${mgr.graduation}</cite></li>
+			    <li><label>专业技术职称</label><cite>${mgr.professional}</cite></li>
 			    <li><label>客户经理等级</label><cite>
-			     <select >
-			              <c:forEach items="${mgrLevel}" var="level">
-								<option value="${level.key }" <c:if test="${level.key eq mgr.level }">checked="checked" </c:if> >${level.value }</option>		
-						  </c:forEach>
+			    	<select >
+			    		<c:forEach items="${mgrLevel}" var="level">
+							<option value="${level.key}" <c:if test="${level.key eq mgr.level}">selected</c:if>>${level.value}</option>		
+						</c:forEach>
 			        </select>
-			        </cite></li>
-					           
+			        </cite></li>         
 			    <li><label>所在单位</label><cite>${mgr.unit }</cite></li>
 			    <li><label>部门</label><cite>${mgr.dept }</cite></li>
 			    <li><label>职务</label><cite>${mgr.position }</cite></li>

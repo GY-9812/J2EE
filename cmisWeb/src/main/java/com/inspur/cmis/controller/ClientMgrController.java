@@ -56,24 +56,26 @@ public class ClientMgrController {
 	@RequestMapping("/clientMgrList")
 	public String clientMgrList(Model model,@RequestParam(value = "pn", defaultValue = "1") Integer pn,HttpServletRequest request) {
 		//获取页面中传递过来的参数
-		String unit = request.getParameter("unit");
-		String cmid = request.getParameter("cmid");
-		String cname = request.getParameter("cname");
+		String unit=request.getParameter("unit");
+		String cmid=request.getParameter("cmid");
+		String cname=request.getParameter("cname");
 		String status=request.getParameter("status");
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("unit", unit);
 		map.put("cmid", cmid);
 		map.put("cname", cname);
+		map.put("status", status);
 		
 		//配置每页5条
 		PageHelper.startPage(pn, 5);
 		List<ClientManager> clientMgrList=clientMgrService.getClientMgrList(map);
+		
 		PageInfo<ClientManager> pageInfo = new PageInfo<ClientManager>(clientMgrList, clientMgrList.size());
-
 		model.addAttribute("pageInfo", pageInfo);
 		model.addAttribute("unit", unit);
 		model.addAttribute("cmid", cmid);
 		model.addAttribute("cname", cname);
+		model.addAttribute("status", status);
 
 		return "/user/clientMgr.jsp";
 	}
@@ -152,12 +154,14 @@ public class ClientMgrController {
 		User user = new User();
 		user.setUsername(mgr.getCname());
 		user.setSex(mgr.getSex());
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String birthday = format.format(mgr.getBirthday());
+		user.setBirthday(birthday);
 		user.setPassword("123456");
 		user.setQuestion("6位连续数字");
 		user.setAnswer("123456");
 		user.setIsEnable("T");
 		user.setRoleId(Constant.USER_ROLEID_MANAGER);
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String time = format.format(today);
 		user.setRegisterTime(time);
 		user.setLastTime(time);
@@ -169,28 +173,93 @@ public class ClientMgrController {
 		return "/user/clientMgrAdd.jsp";
 	}
 	
+	@ModelAttribute("nationParam")
+	public Map<String, String> getNationList() {
+		Map<String, String> nationParam = new HashMap<String, String>();
+		List<Param> paramList = paramService.getParamList(Constant.PARAM_TYPE_NATION);
+		if (paramList != null && paramList.size() > 0) {
+			for (int i = 0; i < paramList.size(); i++) {
+				Param param = paramList.get(i);
+				nationParam.put(param.getParamCode(), param.getParamName());
+			}
+		}
+		return nationParam;
+	}
+
+	@ModelAttribute("policeStatus")
+	public Map<String, String> getPoliceStatusList() {
+		Map<String, String> policeParam = new HashMap<String, String>();
+		List<Param> paramList = paramService.getParamList(Constant.PARAM_TYPE_POLICSTATUS);
+		if (paramList != null && paramList.size() > 0) {
+			for (int i = 0; i < paramList.size(); i++) {
+				Param param = paramList.get(i);
+				policeParam.put(param.getParamCode(), param.getParamName());
+			}
+		}
+		return policeParam;
+	}
+
+	@ModelAttribute("education")
+	public Map<String, String> getEducationList() {
+		Map<String, String> educationParam = new HashMap<String, String>();
+		List<Param> paramList = paramService.getParamList(Constant.PARAM_TYPE_EDUCATION);
+		if (paramList != null && paramList.size() > 0) {
+			for (int i = 0; i < paramList.size(); i++) {
+				Param param = paramList.get(i);
+				educationParam.put(param.getParamCode(), param.getParamName());
+			}
+		}
+		return educationParam;
+	}
+
+	@ModelAttribute("degree")
+	public Map<String, String> getDegreeList() {
+		Map<String, String> degreeParam = new HashMap<String, String>();
+		List<Param> paramList = paramService.getParamList(Constant.PARAM_TYPE_DEGREE);
+		if (paramList != null && paramList.size() > 0) {
+			for (int i = 0; i < paramList.size(); i++) {
+				Param param = paramList.get(i);
+				degreeParam.put(param.getParamCode(), param.getParamName());
+			}
+		}
+		return degreeParam;
+	}
+
+	@ModelAttribute("mgrLevel")
+	public Map<String, String> getMgrLevelList() {
+		Map<String, String> levelParam = new HashMap<String, String>();
+		List<Param> paramList = paramService.getParamList(Constant.PARAM_TYPE_MGRLEVEL);
+		if (paramList != null && paramList.size() > 0) {
+			for (int i = 0; i < paramList.size(); i++) {
+				Param param = paramList.get(i);
+				levelParam.put(param.getParamCode(), param.getParamName());
+			}
+		}
+		return levelParam;
+	}
+	
 	/**
 	 * 导出excel
 	 */
 	@RequestMapping("/exportExcel")
 	@ResponseBody
 	public void exportExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<HashMap<String, Object>> clientMgrList = null;
+		//获取页面中传递过来的参数
+		String unit=request.getParameter("unit");
+		String cmid=request.getParameter("cmid");
+		String cname=request.getParameter("cname");
+		String status=request.getParameter("status");
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		// 调用Service层
-		String unit = request.getParameter("unit");
-		String cmid = request.getParameter("cmid");
-		String cname = request.getParameter("cname");
 		map.put("unit", unit);
 		map.put("cmid", cmid);
 		map.put("cname", cname);
+		map.put("status", status);
 
-		clientMgrList = clientMgrService.exportExcel(map);
+		List<ClientManager> clientMgrList = clientMgrService.getClientMgrList(map);
 
-		//设置EXCEL的第一行的标题头
 		String[] title = { "客户经理编号", "姓名", "性别", "身份证号", "出生日期", "年龄", "民族",
 				"政治面貌", "籍贯", "学历", "学位", "毕业院校", "参加工作时间", "入职时间", "办公电话",
-				"移动电话", "客户经理等级", "机构", "部门" };
+				"移动电话", "客户经理等级", "机构", "部门" };// 设置EXCEL的第一行的标题头（改）
 		// 创建excel工作薄
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		// 创建一个工作表sheet
@@ -201,40 +270,37 @@ public class ClientMgrController {
 
 		// 插入第一行数据 id 地区名称
 		for (int i = 0; i < title.length; i++) {
+
 			cell = row.createCell(i);
 			// 赋值
 			cell.setCellValue(title[i]);
 		}
+		
 		// 追加数据行数
 		int j = 1;
-		HashMap<String, Object> list = null;
 		for (int i = 0; i < clientMgrList.size(); i++) {
-			list = clientMgrList.get(i);
+			ClientManager list = clientMgrList.get(i);
 			XSSFRow nextrow = sheet.createRow(i + 1);
 			XSSFCell cessk = nextrow.createCell(0);
-
-			BigDecimal cm_id = (BigDecimal) (list.get("CMID"));
-			cessk.setCellValue(cm_id.intValue());// 客户经理编号
 			
+			cessk.setCellValue(list.getCmid());// 客户经理编号
 			cessk = nextrow.createCell(1);
-			cessk.setCellValue((String) list.get("CNAME"));// 姓名
+			cessk.setCellValue(list.getCname());// 姓名
 			cessk = nextrow.createCell(2);
-			cessk.setCellValue(((String) list.get("SEX")) == "F" ? "女" : "男");// 性别
+			cessk.setCellValue((list.getSex()) == "F" ? "女" : "男");// 性别
 			cessk = nextrow.createCell(3);
-			cessk.setCellValue((String) list.get("SSN"));// 身份证号码
+			cessk.setCellValue((String) list.getSsn());// 身份证号码
 			cessk = nextrow.createCell(4);
 			DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			Timestamp birthday = (Timestamp) list.get("BIRTHDAY");
+			Date birthday = list.getBirthday();
 			if (birthday != null)
 				cessk.setCellValue(format.format(birthday));// 出生日期
 			else
 				cessk.setCellValue("");// 出生日期
-
 			cessk = nextrow.createCell(5);
-			BigDecimal age = (BigDecimal) (list.get("AGE"));
-			cessk.setCellValue(age.intValue());// 年龄
+			cessk.setCellValue(list.getAge());// 年龄
 			cessk = nextrow.createCell(6);
-			String nation = (String) list.get("NATION");
+			String nation=list.getNation();
 			Map paramMap = new HashMap<String, String>();
 			paramMap.put("paramType", Constant.PARAM_TYPE_NATION);
 			paramMap.put("paramCode", nation);
@@ -242,16 +308,16 @@ public class ClientMgrController {
 			cessk.setCellValue(nationName);// 民族
 
 			cessk = nextrow.createCell(7);
-			String policeStatus = (String) list.get("POLITICAL");// 政治面貌
+			String political=list.getPolitical();// 政治面貌
 			paramMap.clear();
 			paramMap.put("paramType", Constant.PARAM_TYPE_POLICSTATUS);
-			paramMap.put("paramCode", policeStatus);
+			paramMap.put("paramCode", political);
 			String policeStatusName = paramService.getParamName(paramMap);
 			cessk.setCellValue(policeStatusName);// 民族
 			cessk = nextrow.createCell(8);// 籍贯
-			cessk.setCellValue((String) list.get("HOMETOWN"));
+			cessk.setCellValue(list.getHomeTown());
 			cessk = nextrow.createCell(9);// 学历
-			String education = (String) list.get("EDUCATION");
+			String education = list.getEducation();
 			paramMap.clear();
 			paramMap.put("paramType", Constant.PARAM_TYPE_EDUCATION);
 			paramMap.put("paramCode", education);
@@ -259,7 +325,7 @@ public class ClientMgrController {
 			cessk.setCellValue(educationName);
 
 			cessk = nextrow.createCell(10);// 学位
-			String degree = (String) list.get("DEGREE");
+			String degree = list.getDegree();
 			paramMap.clear();
 			paramMap.put("paramType", Constant.PARAM_TYPE_DEGREE);
 			paramMap.put("paramCode", degree);
@@ -267,41 +333,43 @@ public class ClientMgrController {
 			cessk.setCellValue(degreeName);
 
 			cessk = nextrow.createCell(11);// 毕业院校
-			cessk.setCellValue((String) list.get("GRADUATION"));
+			cessk.setCellValue(list.getGraduation());
 
 			cessk = nextrow.createCell(12);
-			Timestamp hireDate = (Timestamp) list.get("HIREDATE");
+			Date hireDate = list.getHireDate();
 			if (hireDate != null)
 				cessk.setCellValue(format.format(hireDate));
 			else
 				cessk.setCellValue("");// 参加工作时间
 
 			cessk = nextrow.createCell(13);
-			Timestamp entryDate = (Timestamp) list.get("ENTRYDATE");// 入职时间
+			Date entryDate = list.getEntryDate();// 入职时间
 			if (entryDate != null)
 				cessk.setCellValue(format.format(entryDate));
 			else
 				cessk.setCellValue("");
 
 			cessk = nextrow.createCell(14);
-			cessk.setCellValue((String) list.get("TEL"));
+			cessk.setCellValue(list.getTel());
 
 			cessk = nextrow.createCell(15);
-			cessk.setCellValue((String) list.get("MOBILE"));
+			cessk.setCellValue(list.getMobile());
 
 			cessk = nextrow.createCell(16);
-			String level = (String) list.get("LEVEL");
-			String mgrlevel = "";
+			String level = list.getLevel();
+			System.out.println("level===="+level);
+			String epLevel = "";
 			paramMap.clear();
 			paramMap.put("paramType", Constant.PARAM_TYPE_DEGREE);
 			paramMap.put("paramCode", level);
-			mgrlevel = paramService.getParamName(paramMap);
-			cessk.setCellValue(mgrlevel);// 客户经理级别
+			epLevel = paramService.getParamName(paramMap);
+			System.out.println("epLevel============="+epLevel);
+			cessk.setCellValue(epLevel);// 客户经理级别
 
 			cessk = nextrow.createCell(17);
-			cessk.setCellValue((String) list.get("UNIT"));// 机构
+			cessk.setCellValue(list.getUnit());// 机构
 			cessk = nextrow.createCell(18);
-			cessk.setCellValue((String) list.get("DEPT"));// 部门
+			cessk.setCellValue(list.getDept());// 部门
 			j++;
 		}
 		response.setContentType("application/vnd.ms-excel");
@@ -317,75 +385,5 @@ public class ClientMgrController {
 		} finally {
 			//workbook.();
 		}
-	}
-
-	@ModelAttribute("nationParam")
-	public Map<String, String> getNationList() {
-		Map<String, String> nationParam = new HashMap<String, String>();
-		List<Param> paramList = paramService
-				.getParamList(Constant.PARAM_TYPE_NATION);
-		if (paramList != null && paramList.size() > 0) {
-			for (int i = 0; i < paramList.size(); i++) {
-				Param param = paramList.get(i);
-				nationParam.put(param.getParamCode(), param.getParamName());
-			}
-		}
-		return nationParam;
-	}
-
-	@ModelAttribute("policeStatus")
-	public Map<String, String> getPoliceStatusList() {
-		Map<String, String> policeParam = new HashMap<String, String>();
-		List<Param> paramList = paramService
-				.getParamList(Constant.PARAM_TYPE_POLICSTATUS);
-		if (paramList != null && paramList.size() > 0) {
-			for (int i = 0; i < paramList.size(); i++) {
-				Param param = paramList.get(i);
-				policeParam.put(param.getParamCode(), param.getParamName());
-			}
-		}
-		return policeParam;
-	}
-
-	@ModelAttribute("education")
-	public Map<String, String> getEducationList() {
-		Map<String, String> educationParam = new HashMap<String, String>();
-		List<Param> paramList = paramService
-				.getParamList(Constant.PARAM_TYPE_EDUCATION);
-		if (paramList != null && paramList.size() > 0) {
-			for (int i = 0; i < paramList.size(); i++) {
-				Param param = paramList.get(i);
-				educationParam.put(param.getParamCode(), param.getParamName());
-			}
-		}
-		return educationParam;
-	}
-
-	@ModelAttribute("degree")
-	public Map<String, String> getDegreeList() {
-		Map<String, String> degreeParam = new HashMap<String, String>();
-		List<Param> paramList = paramService
-				.getParamList(Constant.PARAM_TYPE_DEGREE);
-		if (paramList != null && paramList.size() > 0) {
-			for (int i = 0; i < paramList.size(); i++) {
-				Param param = paramList.get(i);
-				degreeParam.put(param.getParamCode(), param.getParamName());
-			}
-		}
-		return degreeParam;
-	}
-
-	@ModelAttribute("mgrLevel")
-	public Map<String, String> getMgrLevelList() {
-		Map<String, String> levelParam = new HashMap<String, String>();
-		List<Param> paramList = paramService
-				.getParamList(Constant.PARAM_TYPE_MGRLEVEL);
-		if (paramList != null && paramList.size() > 0) {
-			for (int i = 0; i < paramList.size(); i++) {
-				Param param = paramList.get(i);
-				levelParam.put(param.getParamCode(), param.getParamName());
-			}
-		}
-		return levelParam;
 	}
 }

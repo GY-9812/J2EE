@@ -35,14 +35,4 @@ public class ClientMgrServiceImpl implements ClientMgrService{
 	public void deleteMgr(String[] cmid) {
 		clientMgrMapper.deleteMgr(cmid);
 	}
-
-	@Override
-	public List<HashMap<String, Object>> exportExcel(HashMap<String, Object> map) {
-		return clientMgrMapper.exportExcel(map);
-	}
-
-	@Override
-	public XSSFWorkbook exportExcelInfo(HashMap<String, Object> map) throws Exception {
-		return clientMgrMapper.exportExcelInfo(map);
-	}
 }
