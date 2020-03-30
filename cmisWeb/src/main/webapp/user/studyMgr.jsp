@@ -155,7 +155,14 @@
 							<c:if test="${study.type=='4'}">客户营销技巧</c:if></td>
 						<td>${study.des}</td>
 						<td>${study.date}</td>
-						<td><a href="<%=basePath%>downLoadStudyFile?fileName=${study.url}" class="tablelink">${study.url}</a></td>
+						<td>
+							<c:if test="${study.line=='T'||study.uper eq uname}">
+								<a href="<%=basePath%>downLoadStudyFile?fileName=${study.url}" class="tablelink">${study.url}</a>
+							</c:if>
+							<c:if test="${study.line=='F'&&study.uper ne uname}">
+								${study.url}
+							</c:if>
+						</td>
 						<td>${study.uper}</td>
 					</tr>
 				  </c:forEach>

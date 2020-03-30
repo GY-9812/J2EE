@@ -26,8 +26,8 @@
 	
 	<!--添加学习资料-->
 	<insert id="addStudy" parameterType="Study">
-		insert into gzcrm_learn(L_NAME,L_TYPE,L_DES,L_URL,L_UPER,L_DATE) 
-		                 values(#{name},#{type},#{des},#{url},#{uper},#{date})
+		insert into gzcrm_learn(L_NAME,L_TYPE,L_DES,L_URL,L_LINE,L_UPER,L_DATE) 
+		                 values(#{name},#{type},#{des},#{url},#{line},#{uper},#{date})
 	</insert>
 	
 	<!-- 根据key查询学习资料信息-->
@@ -37,7 +37,7 @@
 	
 	<!--修改学习资料-->
 	<update id="updateStudy" parameterType="Study">
-		update gzcrm_learn set L_NAME=#{name},L_TYPE=#{type},L_DES=#{des},L_URL=#{url} where L_KEY=#{key}
+		update gzcrm_learn set L_NAME=#{name},L_TYPE=#{type},L_DES=#{des},L_URL=#{url},L_LINE=#{line} where L_KEY=#{key}
 	</update>
 	
 	<!--学习资料的批量删除 -->

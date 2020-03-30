@@ -52,8 +52,8 @@
 			<ul class="forminfo">
 				<li><label>资料名称</label><input name="name" type="text" class="dfinput" value="${member.name}" /></li>
 				<li><label>完全公开</label><cite>
-						<input name="ispublic" type="radio" value="" checked="checked" />是&nbsp;&nbsp;&nbsp;&nbsp;
-						<input name="ispublic" type="radio" value="" />否</cite></li>
+						<input name="line" type="radio" value="T" checked="checked"/>是&nbsp;&nbsp;&nbsp;&nbsp;
+						<input name="line" type="radio" value="F" />否</cite></li>
 				<li><label>资料类型</label><cite><select class="dfselect1" name="type">
 							<option value="">请选择</option>
 							<option value="1" <c:if test="${member.type eq '1' }"> selected </c:if>>规章制度</option>
@@ -73,8 +73,8 @@
 			<ul class="forminfo">
 				<li><label>资料名称</label><input name="name" type="text" class="dfinput" value="${member.name}" readonly/></li>
 				<li><label>完全公开</label><cite>
-						<input name="ispublic" type="radio" value="" checked="checked" />是&nbsp;&nbsp;&nbsp;&nbsp;
-						<input name="ispublic" type="radio" value="" />否</cite></li>
+						<input name="line" type="radio" value="T" <c:if test="${'T' eq member.line}">checked="checked" </c:if>/>是&nbsp;&nbsp;&nbsp;&nbsp;
+						<input name="line" type="radio" value="F" <c:if test="${'F' eq member.line}">checked="checked" </c:if>/>否</cite></li>
 				<li><label>资料类型</label><cite><select class="dfselect1" name="type">
 							<option value="1" <c:if test="${member.type eq '1' }">selected</c:if>>规章制度</option>
 							<option value="2" <c:if test="${member.type eq '2' }">selected</c:if>>学习培训材料</option>
