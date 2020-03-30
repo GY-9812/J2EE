@@ -45,4 +45,10 @@ public class ClientMgrServiceImpl implements ClientMgrService{
 	public void updateClientMgr(ClientManager mgr) {
 		clientMgrMapper.updateClientMgr(mgr);
 	}
+
+	//报表
+	@Override
+	public List<ClientManager> getStatList(HashMap<String, Object> map) {
+		return clientMgrMapper.getStatList(map);
+	}
 }

@@ -14,4 +14,7 @@ public interface ClientMgrMapper {
 	public void deleteMgr(String cmId[]);
 	public ClientManager getClientMgrByCmid (int key);
 	public void updateClientMgr(ClientManager mgr);
+	
+	//报表
+	public List<ClientManager> getStatList(HashMap<String, Object> map);
 }

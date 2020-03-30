@@ -52,13 +52,13 @@
 	       and CM_UNIT like '%' #{unit} '%'
 	    </if>
 	    <if test="cmid!= null and cmid!=''">
-	       and CM_ID=${cmid}
+	       and CM_ID=#{cmid}
 	    </if>
 	    <if test="cname != null and cname !=''">
 	       and CM_NAME like '%' #{cname} '%'
 	    </if>
 	    <if test="status != null and status !=''">
-	       and CM_STATUS=${status}
+	       and CM_STATUS=#{status}
 	    </if>
 	</select>
 	
@@ -99,4 +99,28 @@
 		CM_DEPT=#{dept},CM_LEVEL=#{level},CM_POSITION=#{position},CM_BUSINESS_LINES=#{line},CM_PHOTO=#{photo},
 		CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier} where CM_ID=#{cmid}
 	</update>
+	
+	
+	<!--报表的默认查询、条件查询-->
+	<select id="getStatList" parameterType="Map" resultMap="BaseResultMap">
+		select * from gzcrm_cminfo where 1=1
+		<if test="unit != null and unit != '' ">
+	       and CM_UNIT like '%' #{unit} '%'
+	    </if>
+	    <if test="status != null and status != ''">
+	       and CM_STATUS=#{status}
+	    </if>
+	    <if test="sex != null and sex != ''">
+	       and CM_SEX=#{sex}
+	    </if>
+	    <if test="education != null and education !=''">
+	       and CM_EDUCATION=#{education}
+	    </if>
+	    <if test="professional != null and professional != ''">
+	       and CM_PROFESSIONAL_TITLES like '%' #{professional} '%'
+	    </if>
+	    <if test="level != null and level != ''">
+	       and CM_LEVEL=#{level}
+	    </if>
+	</select>
 </mapper>

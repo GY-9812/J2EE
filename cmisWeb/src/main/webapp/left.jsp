@@ -75,7 +75,7 @@ $(function(){
 	    <span><img src="images/leftico01.png" /></span>报表管理
 	    </div>
 	    	<ul class="menuson">
-	        <li><cite></cite><a href="user/clientMgrStat.jsp" target="rightFrame">报表管理</a><i></i></li>
+	        <li><cite></cite><a href="statList" target="rightFrame">报表管理</a><i></i></li>
 	        </ul>    
 	   </dd>
 	   <dd>

@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%
 	String path = request.getContextPath();
 	String basePath = request.getScheme() + "://"
@@ -12,7 +11,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>客户经理信息综合维护</title>
+<title>报表管理</title>
 <link href="<%=basePath%>css/style.css" rel="stylesheet" type="text/css" />
 <link href="<%=basePath%>css/select.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<%=basePath%>js/jquery.js"></script>
@@ -21,60 +20,18 @@
 <script type="text/javascript" src="<%=basePath%>editor/kindeditor.js"></script>
 
 <script type="text/javascript">
-	function modifyClientMgr(){
-		var $ids=[];     //定义一个空数组
-		var $chkBoxes=$('#clientMgrTable').find('input:checked'); //找到选中的checkBox集
-		if ($chkBoxes.length==0){   //如果不选会弹出警告框
-			alert('请选择一个数据！');
-			return false;
-		}
-		if ($chkBoxes.length>1){   //如果选择多于一个会弹出警告框
-			alert('最多只能选择一个数据！');
-			return false;
-		}
-		//遍历被选中的数据集
-		$($chkBoxes).each(function(){
-			$ids.push($(this).attr('data-id'));
-		})
-		window.location="<%=basePath%>modifyClientMgr?key="+$ids[0];
-	}
-	
-	function confirmMsgDel()
-	{  
-		var ids="";
-	    var $chkBoxes = $('#clientMgrTable').find('input:checked');   //找到被选中的checkbox集
-	    if ($chkBoxes.length == 0) {         //如果不勾选弹出警告框
-	      alert('请至少选择一个数据');
-	      return false;
-	    }
-	     //遍历被选中的checkbox集
-	    $($chkBoxes).each(function () { 
-	      ids +=$(this).attr('data-id')+",";
-	    })
-	    ids = ids.substr(0,ids.length-1);
-		if (confirm("您确定要删除选中的用户信息吗?"))
-			 window.location="<%=basePath%>deleteMgr?cmid="+ids; 
-	}
-	
-	function exportMsg()
-	{  
-	   if(confirm("您确定要导出吗?"))
-	     window.location.href = "<%=basePath%>exportExcel";
-	}
-	
-	function deleteMgr(cmid){
-		 if(confirm("删除客户经理信息,您确定要删除吗?")){
-			 window.location="<%=basePath%>deleteMgr?cmid="+cmid;
-		 }
+	function exportMsg() {
+		if (confirm("您确定要导出excel文件吗?"))
+			window.location.href="<%=basePath%>exportStatExcel";
 	}
 	
 	function gotoPage(pn){
 		if(null!=pn && pn!=''){
-			document.form1.action="<%=basePath%>clientMgrList?pn="+pn;
+			document.form1.action="<%=basePath%>statList?pn="+pn;
 		}
 		var pageNum=$("#toPageNums").val();
 		if(null!=pageNum && pageNum!=''){
-			document.form1.action="<%=basePath%>clientMgrList?pn="+pageNum;
+			document.form1.action="<%=basePath%>statList?pn="+pageNum;
 		}
 		document.form1.submit();
 	}
@@ -96,7 +53,6 @@
 		$(".cancel").click(function() {
 			$(".tip").fadeOut(100);
 		});
-
 	});
 </script>
 <script type="text/javascript">
@@ -105,16 +61,17 @@
 		cssPath : './index.css'
 	});
 </script>
+
 <script type="text/javascript">
 	$(document).ready(function(e) {
 		$(".select1").uedSelect({
 			width : 100
 		});
 		$(".select2").uedSelect({
-			width : 167
+			width : 200
 		});
 		$(".select3").uedSelect({
-			width : 100
+			width : 150
 		});
 	});
 </script>
@@ -123,15 +80,13 @@
 	<div class="place">
 		<span>位置：</span>
 		<ul class="placeul">
-			<li><a href="clientMgrList">客户经理信息综合管理维护</a></li>
+			<li><a href="<%=basePath%>statList">报表管理</a></li>
 		</ul>
 	</div>
-	<form action="clientMgrList" method="post" name="form1">
+	<form action="statList" method="post" name="form1">
 		<div class="formbody">
 			<ul class="seachform">
 				<li><label>机构</label><input name="unit" type="text" class="scinput" value="${unit}"/></li>
-	    		<li><label>客户经理编号</label><input name="cmid" type="text" class="scinput" value="${cmid}" /></li>
-	    		<li><label>姓名</label><input name="cname" type="text" class="scinput" value="${cname}"/></li>
 	    		<li><label>状态</label>  
 	    			<div class="vocation">
 	    				<select class="select1" name="status">
@@ -140,64 +95,98 @@
 	    					<option value="F" <c:if test="${status=='F'}">selected</c:if>>退出</option>
 	    				</select>
 					</div></li>
-				<li><label>&nbsp;</label><input type="submit" class="scbtn" value="查询" /></li>
+				<li><label>性别</label>
+					<div class="vocation">
+						<select class="select1" name="sex">
+							<option value="">请选择</option>
+							<option value="M" <c:if test="${sex=='M'}">selected</c:if>>男</option>
+							<option value="F" <c:if test="${sex=='F'}">selected</c:if>>女</option>
+						</select>
+					</div></li>
+				<li><label>学历</label>
+					<div class="vocation">
+						<select class="select1" name="education">
+							<option value="">请选择</option>
+							<c:forEach items="${education}" var="edu">
+								<option value="${edu.key}" <c:if test="${edu.key eq educat}">selected</c:if>>${edu.value}</option>		
+							</c:forEach>
+						</select>
+					</div></li>
+				<li><label>专业技术职称</label><input name="professional" type="text" class="scinput" value="${professional}"/></li>
+				<li><label>客户经理等级</label>
+				<div class="vocation">
+						<select class="select3" name="level">
+							<option value="">请选择</option>
+							<c:forEach items="${mgrLevel}" var="level">
+								<option value="${level.key}" <c:if test="${level.key eq lev}">selected</c:if>>${level.value}</option>		
+							</c:forEach>
+						</select>
+					</div></li>
+				<li><label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+					<input type="submit" class="scbtn" value="查询" /> &nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="button" class="scbtn" value="导出excel" onClick="exportMsg()"/></li>
 			</ul>
 		</div>
 		<div class="rightinfo">
 			<div class="tools">
-				<ul class="toolbar1">
-					<li><a href="<%=basePath%>toMgrAdd"><span><img 
-								src="<%=basePath%>images/t01.png"/></span>添加</a></li>
-	        		<li><a href="javascript:modifyClientMgr()"><span><img 
-	        					src="<%=basePath%>images/t02.png"/></span>修改</a></li>
-	        		<li><a href="javascript:confirmMsgDel()" ><span><img 
-	        					src="<%=basePath%>images/t03.png"/></span>删除</a></li>
-	        		<li><a href="javascript:exportMsg()" ><span><img 
-	        					src="<%=basePath%>images/t06.png" height="24" width="20"/></span>导出</a></li>
+				<ul>
+					<li></li>
 				</ul>
 			</div>
-			<table class="tablelist" id="clientMgrTable">
+			<table class="tablelist">
 				<thead>
 					<tr class="tablehead">
-						<td colspan="10">客户经理信息列表</td>
+						<td colspan="14">客户经理信息列表</td>
 					</tr>
 				</thead>
 				<thead>
 					<tr>
-						<th>选择</th>
 						<th>员工号</th>
 						<th>姓名</th>
 						<th>性别</th>
-						<th>身份证号</th>
-						<th>出生日期</th>
 						<th>客户经理等级</th>
 						<th>机构</th>
 						<th>部门</th>
-						<th></th>
+						<th>业务条线</th>
+						<th>职务</th>
+						<th>客户经理从业年限</th>
+						<th>联系电话</th>
+						<th>在职</th>
+						<th>年龄</th>
+						<th>学历</th>
+						<th>专业职称</th>
 					</tr>
 				</thead>
 				<tbody>
 				  <c:forEach items="${pageInfo.list}" var="mgr">
-				  	<tr>
-						<td><input name="cmid" data-id="${mgr.cmid}" type="checkbox" value="${mgr.cmid}"/></td>
-				        <td>${mgr.cmid}</td>
-				        <td>${mgr.cname}</td>
-				        <td><c:if test="${mgr.sex=='F'}">女</c:if>
+					<tr>
+						<td>${mgr.cmid}</td>
+						<td>${mgr.cname}</td>
+						<td><c:if test="${mgr.sex=='F'}">女</c:if>
 					        <c:if test="${mgr.sex=='M'}">男</c:if></td>
-				        <td>${mgr.ssn}</td>
-				        <td><fmt:formatDate value="${mgr.birthday}" pattern="yyyy-MM-dd"/></td>
-				        <td><c:forEach items="${mgrLevel}" var="itemtype">
+						<td><c:forEach items="${mgrLevel}" var="itemtype">
 							    <c:if test="${mgr.level eq itemtype.key}">
 					            	${itemtype.value}
 					            </c:if>
 					    	</c:forEach>
 				        </td>
-				        <td>${mgr.unit}</td>
-				        <td>${mgr.dept}</td>
-				        <td><a href="<%=basePath%>clientMgr?cmid=${mgr.cmid}" class="tablelink">查看</a> 
-				            <a href="javascript:deleteMgr('${mgr.cmid}')" class="tablelink"> 删除</a>
-				        </td>
-				    </tr> 
+						<td>${mgr.unit}</td>
+						<td>${mgr.dept}</td>
+						<td>${mgr.line}</td>
+						<td>${mgr.position}</td>
+						<td>${mgr.workYears}</td>
+						<td>${mgr.mobile}</td>
+						<td><c:if test="${mgr.status=='T'}">在职</c:if>
+							<c:if test="${mgr.status=='F'}">退出</c:if></td>
+						<td>${mgr.age}</td>
+						<td><c:forEach items="${education}" var="edu">
+							    <c:if test="${mgr.education eq edu.key}">
+					            	${edu.value}
+					            </c:if>
+					    	</c:forEach>
+					    </td>
+						<td>${mgr.professional}</td>
+					</tr>
 				  </c:forEach>
 				</tbody>
 			</table>
