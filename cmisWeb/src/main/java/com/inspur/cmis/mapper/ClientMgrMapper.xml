@@ -100,6 +100,20 @@
 		CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier} where CM_ID=#{cmid}
 	</update>
 	
+	<!-- 客户经理批量保存-->
+	<insert id="importClientMgrList" parameterType="java.util.List">
+    	insert into GZCRM_CMINFO (CM_NAME,CM_SEX,CM_SSN,CM_BIRTHDAY,CM_AGE,CM_NATION,CM_POLITICAL_LANDSCAPE,CM_HOMETOWN,
+    	CM_EDUCATION,CM_DEGREE,CM_GRADUATED,CM_PROFESSIONAL_TITLES,CM_HIREDATE,CM_ENTRY_TIME,CM_FINANCIAL_YEARS,CM_WORKING_YEARS,
+    	CM_TEL,CM_MOBILE,CM_UNIT,CM_DEPT,CM_LEVEL) 
+		<foreach collection="list" item="clientMgr" separator="union all">
+			(select #{clientMgr.cname},#{clientMgr.sex},#{clientMgr.ssn},#{clientMgr.birthday},
+			#{clientMgr.age},#{clientMgr.nation},#{clientMgr.political}, #{clientMgr.homeTown},#{clientMgr.education},
+			#{clientMgr.degree},#{clientMgr.graduation},#{clientMgr.professional},#{clientMgr.hireDate},
+	       	#{clientMgr.entryDate},#{clientMgr.financeYears},#{clientMgr.workYears},#{clientMgr.tel},
+	       	#{clientMgr.mobile},#{clientMgr.unit},#{clientMgr.dept},#{clientMgr.level} from dual)
+       	</foreach>
+	</insert>
+	
 	
 	<!--报表的默认查询、条件查询-->
 	<select id="getStatList" parameterType="Map" resultMap="BaseResultMap">

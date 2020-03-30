@@ -46,6 +46,12 @@ public class ClientMgrServiceImpl implements ClientMgrService{
 		clientMgrMapper.updateClientMgr(mgr);
 	}
 
+	//导入
+	@Override
+	public void importClientMgrList(List<ClientManager> clientMgrList) {
+		clientMgrMapper.importClientMgrList(clientMgrList);
+	}
+
 	//报表
 	@Override
 	public List<ClientManager> getStatList(HashMap<String, Object> map) {

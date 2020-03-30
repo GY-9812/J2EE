@@ -2,11 +2,14 @@ package com.inspur.cmis.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.github.pagehelper.PageHelper;
@@ -40,6 +44,7 @@ import com.inspur.cmis.pojo.User;
 import com.inspur.cmis.service.ClientMgrService;
 import com.inspur.cmis.service.ParamService;
 import com.inspur.cmis.service.UserService;
+import com.inspur.cmis.util.ImportExcelUtil;
 
 @Controller
 public class ClientMgrController {
@@ -622,5 +627,83 @@ public class ClientMgrController {
 		} finally {
 			//workbook.();
 		}
+	}
+	
+	
+	/**
+	 * 客户经理信息的批量导入
+	 */
+	@RequestMapping("/uploadExcel")
+	public void uploadExcel(HttpServletRequest request,HttpServletResponse response) throws Exception {
+		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+		InputStream in = null;
+		List<List<Object>> listob = null;
+		MultipartFile file = multipartRequest.getFile("upfile");
+
+		if (file.isEmpty()) {
+			throw new Exception("文件不存在！");
+		}
+		in = file.getInputStream();
+		listob = new ImportExcelUtil().getBankListByExcel(in,file.getOriginalFilename());
+		in.close();
+		
+		List<ClientManager> clientList = new ArrayList<ClientManager>();
+		List<User> userList = new ArrayList<User>();
+		Date today = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String time = format.format(today);
+		
+		//该处可调用service相应方法进行数据保存到数据库中，现只对数据输出
+		for (int i = 0; i < listob.size()-2; i++) {
+			List<Object> lo = listob.get(i);
+			System.out.println(listob.size());
+			System.out.println(lo);
+			ClientManager manager = new ClientManager();
+			manager.setCname(String.valueOf(lo.get(0)));// 姓名
+			manager.setSex(String.valueOf(lo.get(1)));// 性别
+			manager.setSsn(String.valueOf(lo.get(2)));// 身份证号码
+			manager.setBirthday(format.parse(String.valueOf(lo.get(3) == null ? "1991-01-01" : lo.get(3))));// 出生日期
+			manager.setAge(Integer.parseInt(String.valueOf(lo.get(4) == null ? "0" : lo.get(4))));// 年龄
+			manager.setNation(String.valueOf(lo.get(5)));// 民族
+			manager.setPolitical(String.valueOf(lo.get(6)));// 政治面貌
+			manager.setHomeTown(String.valueOf(lo.get(7)));// 籍贯
+			manager.setEducation(String.valueOf(lo.get(8)));// 学历
+			manager.setDegree(String.valueOf(lo.get(9)));// 学位
+			manager.setGraduation(String.valueOf(lo.get(10)));// 毕业院校
+			manager.setProfessional(String.valueOf(lo.get(11)));// 专业职称
+			manager.setHireDate(format.parse(String.valueOf(lo.get(12) == null ? "1991-01-01" : lo.get(12)))); // 参加工作时间
+			manager.setEntryDate((format.parse(String.valueOf(lo.get(13) == null ? "1991-01-01" : lo.get(13))))); // 入行参加工作时间
+			manager.setFinanceYears(Integer.parseInt(String.valueOf(lo.get(14) == null ? "0" : lo.get(14))));// 从事金融工作年限
+			manager.setWorkYears(Integer.parseInt(String.valueOf(lo.get(15) == null ? "0" : lo.get(15))));// 工作年限
+			manager.setTel(String.valueOf(lo.get(16)));// 办公电话
+			manager.setMobile(String.valueOf(lo.get(17)));// 移动电话
+			manager.setUnit(String.valueOf(lo.get(18)));// 机构
+			manager.setDept(String.valueOf(lo.get(19)));// 部门
+			manager.setLevel(String.valueOf(lo.get(20)));// 客户经理等级
+
+			clientList.add(manager);
+			User user = new User();
+			user.setUsername(String.valueOf(lo.get(0)));
+			user.setSex(String.valueOf(lo.get(1)));
+			user.setPassword("123456");
+			user.setQuestion("6位连续数字");
+			user.setAnswer("123456");
+			user.setIsEnable("T");
+			user.setRoleId("2");
+			user.setRegisterTime(time);
+			user.setLastTime(time);
+		    userList.add(user);
+		    
+		    userService.addUserInfo(user);
+		}
+		
+		clientMgrService.importClientMgrList(clientList);// 批量插入
+
+		PrintWriter out = null;
+		response.setCharacterEncoding("utf-8"); // 防止ajax接受到的中文信息乱码
+		out = response.getWriter();
+		out.print("文件导入成功！");
+		out.flush();
+		out.close();
 	}
 }
