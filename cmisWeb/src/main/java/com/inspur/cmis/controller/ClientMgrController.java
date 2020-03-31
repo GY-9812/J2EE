@@ -654,7 +654,7 @@ public class ClientMgrController {
 		String time = format.format(today);
 		
 		//该处可调用service相应方法进行数据保存到数据库中，现只对数据输出
-		for (int i = 0; i < listob.size()-2; i++) {
+		for (int i = 0; i < listob.size(); i++) {
 			List<Object> lo = listob.get(i);
 			System.out.println(listob.size());
 			System.out.println(lo);
@@ -685,6 +685,7 @@ public class ClientMgrController {
 			User user = new User();
 			user.setUsername(String.valueOf(lo.get(0)));
 			user.setSex(String.valueOf(lo.get(1)));
+			user.setBirthday(String.valueOf(lo.get(3)));
 			user.setPassword("123456");
 			user.setQuestion("6位连续数字");
 			user.setAnswer("123456");
