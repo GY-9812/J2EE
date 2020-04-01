@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inspur.cmis.mapper.MgrWorkResultMapper">
+<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.MgrWorkResult" >
+    <result column="CM_KEY" property="cmKey"/>
+    <result column="CM_ID" property="mgrId"/>
+    <result column="CM_YEAR" property="cmWorkYear"/>
+    <result column="CM_RESULT" property="cmWorkResult"/>
+    <result column="CM_ATTACHMENT" property="cmAttach"/>
+    <result column="CM_MODIFICATION_DATE" property="modifyDate"/>
+    <result column="CM_MODIFICATION_PERSON" property="modifier"/>
+</resultMap>
+
+	<sql id="selectSql">
+     	CM_KEY cmKey,CM_ID mgrId,CM_YEAR cmWorkYear,CM_RESULT cmWorkResult,CM_ATTACHMENT cmAttach,CM_MODIFICATION_DATE modifyDate,
+     	CM_MODIFICATION_PERSON modifier,(select cm_name from gzcrm_cminfo where cm_id=a.CM_ID) mgrName,
+     	(select cname from yc_member where mem_id=a.CM_MODIFICATION_PERSON) modifierName
+  	</sql>
+
+	<select id="getWorkResultList" resultType="mgrWorkResultExt" parameterType="Map">
+    	select <include refid="selectSql"/>
+       	from GZCRM_CMRESULTS a where 1=1 
+      	<if test="cmid != '' and cmid != null">
+          	and CM_ID =#{cmid}
+      	</if>
+  	</select>
+
+	<insert id="workResultAdd" parameterType="mgrWorkResult">
+    	insert into GZCRM_CMRESULTS (CM_KEY,CM_ID,CM_YEAR,CM_RESULT,CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON) 
+	    values(MGROTHER_SEQ.nextval,#{mgrId},#{cmWorkYear},#{cmWorkResult},#{modifyDate},#{modifier})
+	</insert>
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inspur.cmis.mapper.MgrWorkHistoryMapper">
+	<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.MgrWorkHistory">
+		<result column="CM_KEY" property="cmKey" />
+		<result column="CM_ID" property="mgrId" />
+		<result column="CM_OFFICE_DATE" property="officeDate" />
+		<result column="CM_POSITION" property="cmPostion" />
+		<result column="CM_ATTACHMENT" property="cmAttach" />
+		<result column="CM_WORK" property="cmWork" />
+		<result column="CM_UNIT" property="cmUnit" />
+		<result column="CM_MODIFICATION_DATE" property="modifyDate" />
+		<result column="CM_MODIFICATION_PERSON" property="modifier" />
+	</resultMap>
+
+	<sql id="selectSql">
+		CM_KEY cmKey,CM_ID mgrId,CM_OFFICE_DATE officeDate,CM_POSITION
+		cmPostion,CM_ATTACHMENT cmAttach,CM_MODIFICATION_DATE modifyDate,
+		CM_MODIFICATION_PERSON modifier,CM_WORK cmWork,CM_UNIT cmUnit,(select
+		cm_name from gzcrm_cminfo where cm_id=a.CM_ID) mgrName,(select cname
+		from yc_member
+		where mem_id=a.CM_MODIFICATION_PERSON)modifierName
+	</sql>
+
+	<select id="getWorkList" resultType="mgrWorkHistoryExt"
+		parameterType="Map">
+		select
+		<include refid="selectSql" />
+		from GZCRM_CMWORK a where 1=1
+		<if test="mgrId != '' and mgrId != null">
+			and CM_ID =#{mgrId}
+		</if>
+	</select>
+	<!--根据主键查询工作经历 -->
+	<select id="getWorkByKey" resultMap="BaseResultMap"
+		parameterType="String">
+		select * from GZCRM_CMWORK where cm_key=#{id}
+	</select>
+
+	<!-- 更新工作经历 -->
+	<update id="updateWorkHist" parameterType="mgrWorkHistory">
+		update GZCRM_CMWORK set
+		CM_OFFICE_DATE=#{officeDate},CM_POSITION=#{cmPostion} ,
+		CM_WORK=#{cmWork},CM_UNIT=#{cmUnit},
+		CM_ATTACHMENT=#{cmAttach},CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier}
+		where cm_key=#{cmKey}
+	</update>
+</mapper>

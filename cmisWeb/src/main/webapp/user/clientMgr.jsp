@@ -173,7 +173,7 @@
 						<th>客户经理等级</th>
 						<th>机构</th>
 						<th>部门</th>
-						<th></th>
+						<th>操作</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -195,7 +195,8 @@
 				        <td>${mgr.unit}</td>
 				        <td>${mgr.dept}</td>
 				        <td><a href="<%=basePath%>clientMgr?cmid=${mgr.cmid}" class="tablelink">查看</a> 
-				            <a href="javascript:deleteMgr('${mgr.cmid}')" class="tablelink"> 删除</a>
+				            <a href="javascript:deleteMgr('${mgr.cmid}')" class="tablelink">&nbsp;&nbsp;删除</a>
+				            <a href="<%=basePath %>clientMgrInfoOther?pageNum=1&mgrId=${mgr.cmid}" class="tablelink">&nbsp;&nbsp;辅助信息维护</a>
 				        </td>
 				    </tr> 
 				  </c:forEach>

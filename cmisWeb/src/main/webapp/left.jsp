@@ -48,7 +48,17 @@ $(function(){
 	    	<ul class="menuson">
 	        <li><cite></cite><a href="clientMgrList" target="rightFrame">客户经理信息综合维护</a><i></i></li>
 	        <li><cite></cite><a href="user/clientMgrImport.jsp" target="rightFrame">批量导入</a><i></i></li>
-   			<li><cite></cite><a href="user/clientMgrInfoOther.jsp"  target="rightFrame">客户经理辅助信息维护</a><i></i></li>
+   			<%-- <li><cite></cite><a href="clientMgrInfoOther?pageNum=1"  target="rightFrame">客户经理辅助信息维护</a><i></i></li> --%>
+	        </ul>    
+	    </dd>
+	    </c:if>
+	    <c:if test="${user.roleId == '2'}">
+	    <dd>
+	    <div class="title">
+	    <span><img src="images/leftico01.png" /></span>客户经理信息管理
+	    </div>
+	    	<ul class="menuson">
+   			<li><cite></cite><a href="clientMgrInfoOther?pageNum=1"  target="rightFrame">客户经理辅助信息维护</a><i></i></li> 
 	        </ul>    
 	    </dd>
 	    </c:if>
