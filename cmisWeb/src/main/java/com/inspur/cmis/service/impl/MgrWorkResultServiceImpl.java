@@ -24,4 +24,19 @@ public class MgrWorkResultServiceImpl implements MgrWorkResultService {
 	public void workResultAdd(MgrWorkResult mgrWorkResult) {
 		mgrWorkResultMapper.workResultAdd(mgrWorkResult);	
 	}
+
+	@Override
+	public List<MgrWorkResult> getResultByKey(int cmKey) {
+		return mgrWorkResultMapper.getResultByKey(cmKey);
+	}
+
+	@Override
+	public void updateWorkResult(MgrWorkResult work) {
+		mgrWorkResultMapper.updateWorkResult(work);
+	}
+
+	@Override
+	public void deleteMgrResult(int[] keys) {
+		mgrWorkResultMapper.deleteMgrResult(keys);
+	}
 }

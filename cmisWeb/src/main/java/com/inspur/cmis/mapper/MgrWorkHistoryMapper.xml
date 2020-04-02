@@ -13,36 +13,45 @@
 		<result column="CM_MODIFICATION_PERSON" property="modifier" />
 	</resultMap>
 
+	<!--默认查询及条件查询-->
 	<sql id="selectSql">
-		CM_KEY cmKey,CM_ID mgrId,CM_OFFICE_DATE officeDate,CM_POSITION
-		cmPostion,CM_ATTACHMENT cmAttach,CM_MODIFICATION_DATE modifyDate,
-		CM_MODIFICATION_PERSON modifier,CM_WORK cmWork,CM_UNIT cmUnit,(select
-		cm_name from gzcrm_cminfo where cm_id=a.CM_ID) mgrName,(select cname
-		from yc_member
-		where mem_id=a.CM_MODIFICATION_PERSON)modifierName
+		CM_KEY cmKey,CM_ID mgrId,CM_OFFICE_DATE officeDate,CM_POSITION cmPostion,CM_ATTACHMENT cmAttach,
+		CM_WORK cmWork,CM_UNIT cmUnit,CM_MODIFICATION_DATE modifyDate,CM_MODIFICATION_PERSON modifier,
+		(select CM_NAME from gzcrm_cminfo where CM_ID=a.CM_ID) mgrName,
+		(select CNAME from yc_member where MEM_ID=a.CM_MODIFICATION_PERSON) modifierName
 	</sql>
-
-	<select id="getWorkList" resultType="mgrWorkHistoryExt"
-		parameterType="Map">
-		select
-		<include refid="selectSql" />
-		from GZCRM_CMWORK a where 1=1
+	<select id="getMgrWorkList" resultType="mgrWorkHistoryExt" parameterType="Map">
+		select <include refid="selectSql"/> from gzcrm_cmwork a where 1=1
 		<if test="mgrId != '' and mgrId != null">
 			and CM_ID =#{mgrId}
 		</if>
+		<if test="cmPostion != null and cmPostion != ''">
+		  and CM_POSITION=#{cmPostion}
+		</if>
 	</select>
-	<!--根据主键查询工作经历 -->
-	<select id="getWorkByKey" resultMap="BaseResultMap"
-		parameterType="String">
-		select * from GZCRM_CMWORK where cm_key=#{id}
+	
+	<!--添加工作经历-->
+	<insert id="addWorkHist" parameterType="mgrWorkResult">
+    	insert into gzcrm_cmwork(CM_ID,CM_OFFICE_DATE,CM_POSITION,CM_ATTACHMENT,CM_WORK,CM_UNIT,CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON) 
+	    values(#{mgrId},#{officeDate},#{cmPostion},#{cmAttach},#{cmWork},#{cmUnit},#{modifyDate},#{modifier})
+	</insert>
+	
+	<!--根据主键查询工作经历-->
+	<select id="getWorkByKey" resultMap="BaseResultMap" parameterType="int">
+		select * from gzcrm_cmwork where CM_KEY=#{cmKey}
 	</select>
 
-	<!-- 更新工作经历 -->
+	<!--修改工作经历-->
 	<update id="updateWorkHist" parameterType="mgrWorkHistory">
-		update GZCRM_CMWORK set
-		CM_OFFICE_DATE=#{officeDate},CM_POSITION=#{cmPostion} ,
-		CM_WORK=#{cmWork},CM_UNIT=#{cmUnit},
-		CM_ATTACHMENT=#{cmAttach},CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier}
-		where cm_key=#{cmKey}
+		update gzcrm_cmwork set CM_OFFICE_DATE=#{officeDate},CM_POSITION=#{cmPostion},CM_ATTACHMENT=#{cmAttach},CM_WORK=#{cmWork},
+		CM_UNIT=#{cmUnit},CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier} where cm_key=#{cmKey}
 	</update>
+	
+	<!--删除工作经历-->
+	<delete id="deleteWorkHist" parameterType="int[]">
+		delete from gzcrm_cmwork where CM_KEY in
+		<foreach collection="array" item="keys" open="(" close=")" separator="," index="no">
+			#{keys}
+		</foreach>
+	</delete>
 </mapper>

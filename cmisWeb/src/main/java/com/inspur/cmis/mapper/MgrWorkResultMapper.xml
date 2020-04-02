@@ -11,22 +11,45 @@
     <result column="CM_MODIFICATION_PERSON" property="modifier"/>
 </resultMap>
 
+	<!--默认查询及条件查询-->
 	<sql id="selectSql">
-     	CM_KEY cmKey,CM_ID mgrId,CM_YEAR cmWorkYear,CM_RESULT cmWorkResult,CM_ATTACHMENT cmAttach,CM_MODIFICATION_DATE modifyDate,
-     	CM_MODIFICATION_PERSON modifier,(select cm_name from gzcrm_cminfo where cm_id=a.CM_ID) mgrName,
-     	(select cname from yc_member where mem_id=a.CM_MODIFICATION_PERSON) modifierName
+     	CM_KEY cmKey,CM_ID mgrId,CM_YEAR cmWorkYear,CM_RESULT cmWorkResult,CM_ATTACHMENT cmAttach,
+     	CM_MODIFICATION_DATE modifyDate,CM_MODIFICATION_PERSON modifier,
+     	(select CM_NAME from gzcrm_cminfo where CM_ID=a.CM_ID) mgrName,
+     	(select CNAME from yc_member where MEM_ID=a.CM_MODIFICATION_PERSON) modifierName
   	</sql>
-
 	<select id="getWorkResultList" resultType="mgrWorkResultExt" parameterType="Map">
-    	select <include refid="selectSql"/>
-       	from GZCRM_CMRESULTS a where 1=1 
-      	<if test="cmid != '' and cmid != null">
-          	and CM_ID =#{cmid}
+    	select <include refid="selectSql"/> from gzcrm_cmresults a where 1=1 
+      	<if test="mgrId != '' and mgrId != null">
+          	and CM_ID =#{mgrId}
       	</if>
+		<if test="cmWorkYear != null and cmWorkYear != ''">
+		  and CM_YEAR=#{cmWorkYear}
+		</if>
   	</select>
 
+	<!--添加年度工作业绩-->
 	<insert id="workResultAdd" parameterType="mgrWorkResult">
-    	insert into GZCRM_CMRESULTS (CM_KEY,CM_ID,CM_YEAR,CM_RESULT,CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON) 
-	    values(MGROTHER_SEQ.nextval,#{mgrId},#{cmWorkYear},#{cmWorkResult},#{modifyDate},#{modifier})
+    	insert into gzcrm_cmresults(CM_ID,CM_YEAR,CM_RESULT,CM_ATTACHMENT,CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON) 
+	    values(#{mgrId},#{cmWorkYear},#{cmWorkResult},#{cmAttach},#{modifyDate},#{modifier})
 	</insert>
+	
+	<!--根据主键查询年度工作业绩-->
+	<select id="getResultByKey" resultMap="BaseResultMap" parameterType="int">
+		select * from gzcrm_cmresults where CM_KEY=#{cmKey}
+	</select>
+
+	<!--更新年度工作业绩-->
+	<update id="updateWorkResult" parameterType="mgrWorkResult">
+		update gzcrm_cmresults set CM_YEAR=#{cmWorkYear},CM_RESULT=#{cmWorkResult},CM_ATTACHMENT=#{cmAttach},
+		CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier} where CM_KEY=#{cmKey}
+	</update>
+	
+	<!--删除年度工作业绩-->
+	<delete id="deleteMgrResult" parameterType="int[]">
+		delete from gzcrm_cmresults where CM_KEY in
+		<foreach collection="array" item="keys" open="(" close=")" separator="," index="no">
+			#{keys}
+		</foreach>
+	</delete>
 </mapper>

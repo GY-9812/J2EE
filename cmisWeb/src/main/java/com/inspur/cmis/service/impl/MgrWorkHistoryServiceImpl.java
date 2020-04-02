@@ -15,14 +15,26 @@ public class MgrWorkHistoryServiceImpl implements MgrWorkHistoryService {
 	private MgrWorkHistoryMapper mgrWorkHistoryMapper;
 
 	@Override
-	public List<MgrWorkHistory> getWorkList(HashMap<String, Object> map) {
-		return mgrWorkHistoryMapper.getWorkList(map);
+	public List<MgrWorkHistory> getMgrWorkList(HashMap<String, Object> map) {
+		return mgrWorkHistoryMapper.getMgrWorkList(map);
 	}
-	public List<MgrWorkHistory> getWorkByKey(String key){
-		return mgrWorkHistoryMapper.getWorkByKey(key);
+	
+	@Override
+	public void addWorkHist(MgrWorkHistory hist) {
+		mgrWorkHistoryMapper.addWorkHist(hist);
 	}
+	
+	public List<MgrWorkHistory> getWorkByKey(int cmKey){
+		return mgrWorkHistoryMapper.getWorkByKey(cmKey);
+	}
+	
 	@Override
 	public void updateWorkHist(MgrWorkHistory hist) {
 		mgrWorkHistoryMapper.updateWorkHist(hist);
+	}
+
+	@Override
+	public void deleteWorkHist(int[] keys) {
+		mgrWorkHistoryMapper.deleteWorkHist(keys);
 	}
 }
