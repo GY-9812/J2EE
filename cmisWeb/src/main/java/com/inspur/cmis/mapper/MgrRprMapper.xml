@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inspur.cmis.mapper.MgrRprMapper">
+	<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.MgrRpr">
+		<result column="CM_KEY" property="cmKey" />
+		<result column="CM_ID" property="mgrId" />
+		<result column="CM_TYPE" property="type" />
+		<result column="CM_SUB" property="sub" />
+		<result column="CM_DATE" property="date" />
+		<result column="CM_AUNIT" property="aUnit" />
+		<result column="CM_APERSON" property="aPerson" />
+		<result column="CM_RDATE" property="rDate" />
+		<result column="CM_AREASON" property="aReason" />
+		<result column="CM_REMARK" property="remark" />
+		<result column="CM_ATTACHMENT" property="attach" />
+		<result column="CM_MODIFICATION_DATE" property="modifyDate" />
+		<result column="CM_MODIFICATION_PERSON" property="modifier" />
+	</resultMap>
+
+	<!--默认查询及条件查询-->
+	<sql id="selectSql">
+		CM_KEY cmKey,CM_ID mgrId,CM_TYPE type,CM_SUB sub,CM_DATE date,CM_AUNIT aUnit,
+		(select CNAME from yc_member where MEM_ID=a.CM_APERSON) aPerson,CM_RDATE rDate,CM_AREASON aReason,
+		CM_REMARK remark,CM_ATTACHMENT attach,CM_MODIFICATION_DATE modifyDate,CM_MODIFICATION_PERSON modifier,
+		(select CM_NAME from gzcrm_cminfo where CM_ID=a.CM_ID) mgrName,
+		(select CNAME from yc_member where MEM_ID=a.CM_MODIFICATION_PERSON) modifierName
+	</sql>
+	<select id="getMgrRprList" resultType="mgrRprExt" parameterType="Map">
+		select <include refid="selectSql"/> from gzcrm_cmrpr a where 1=1
+		<if test="mgrId != '' and mgrId != null">
+			and CM_ID =#{mgrId}
+		</if>
+		<if test="type != null and type != ''">
+		  and CM_TYPE like '%' #{type} '%'
+		</if>
+	</select>
+	
+	<!--根据审批人姓名查询其id-->
+	<select id="getIdByName" parameterType="String" resultType="int">
+		select MEM_ID from yc_member where C_NAME=#{aPerson}
+	</select>
+	
+	<!--添加奖惩记录-->
+	<insert id="addMgrRpr" parameterType="mgrRpr">
+    	insert into gzcrm_cmrpr(CM_ID,CM_TYPE,CM_SUB,CM_DATE,CM_AUNIT,CM_APERSON,CM_RDATE,CM_AREASON,
+    	CM_REMARK,CM_ATTACHMENT,CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON) values(#{mgrId},#{type},
+    	#{sub},#{date},#{aUnit},#{aPerson},#{rDate},#{aReason},#{remark},#{attach},#{modifyDate},#{modifier})
+	</insert>
+	
+	<!--根据主键查询奖惩记录-->
+	<select id="getRprByKey" resultMap="BaseResultMap" parameterType="int">
+		select * from gzcrm_cmrpr where CM_KEY=#{cmKey}
+	</select>
+
+	<!--修改奖惩记录-->
+	<update id="updateMgrRpr" parameterType="mgrRpr">
+		update gzcrm_cmrpr set CM_TYPE=#{type},CM_SUB=#{sub},CM_DATE=#{date},CM_AUNIT=#{aUnit},
+		CM_APERSON=#{aPerson},CM_RDATE=#{rDate},CM_AREASON=#{aReason},CM_REMARK=#{remark},CM_ATTACHMENT=#{attach},
+		CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier} where cm_key=#{cmKey}
+	</update>
+	
+	<!--删除奖惩记录-->
+	<delete id="deleteMgrRpr" parameterType="int[]">
+		delete from gzcrm_cmrpr where CM_KEY in
+		<foreach collection="array" item="keys" open="(" close=")" separator="," index="no">
+			#{keys}
+		</foreach>
+	</delete>
+</mapper>

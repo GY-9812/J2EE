@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inspur.cmis.mapper.MgrCertificateMapper">
+	<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.MgrCertificate">
+		<result column="CM_KEY" property="cmKey" />
+		<result column="CM_ID" property="mgrId" />
+		<result column="CM_CERTIFICATE_NAME" property="certName" />
+		<result column="CM_CERTIFICATE_TYPE" property="certType" />
+		<result column="CM_CERTIFICATE_NO" property="certNo" />
+		<result column="CM_CERTIFICATE_UNIT" property="certUnit" />
+		<result column="CM_START_DATE" property="start" />
+		<result column="CM_END_DATE" property="end" />
+		<result column="CM_PERIOD" property="period" />
+		<result column="CM_CERTIFICATE_URL" property="certUrl" />
+		<result column="CM_INVALID" property="invalid" />
+		<result column="CM_REMARK" property="remark" />
+		<result column="CM_MODIFICATION_DATE" property="modifyDate" />
+		<result column="CM_MODIFICATION_PERSON" property="modifier" />
+	</resultMap>
+
+	<!--默认查询及条件查询-->
+	<sql id="selectSql">
+		CM_KEY cmKey,CM_ID mgrId,CM_CERTIFICATE_NAME certName,CM_CERTIFICATE_TYPE certType,CM_CERTIFICATE_NO certNo,
+		CM_CERTIFICATE_UNIT certUnit,CM_START_DATE start,CM_END_DATE end,CM_PERIOD period,CM_CERTIFICATE_URL certUrl,
+		CM_INVALID invalid,CM_REMARK remark,CM_MODIFICATION_DATE modifyDate,CM_MODIFICATION_PERSON modifier,
+		(select CM_NAME from gzcrm_cminfo where CM_ID=a.CM_ID) mgrName,
+		(select CNAME from yc_member where MEM_ID=a.CM_MODIFICATION_PERSON) modifierName
+	</sql>
+	<select id="getMgrCertList" resultType="mgrCertificateExt" parameterType="Map">
+		select <include refid="selectSql"/> from gzcrm_certificate a where 1=1
+		<if test="mgrId != '' and mgrId != null">
+			and CM_ID =#{mgrId}
+		</if>
+		<if test="certName != null and certName != ''">
+		  and CM_CERTIFICATE_NAME like '%' #{certName} '%'
+		</if>
+	</select>
+	
+	<!--添加证照信息-->
+	<insert id="addMgrCert" parameterType="mgrCertificate">
+    	insert into gzcrm_certificate(CM_ID,CM_CERTIFICATE_NAME,CM_CERTIFICATE_TYPE,CM_CERTIFICATE_NO,
+    	CM_CERTIFICATE_UNIT,CM_START_DATE,CM_END_DATE,CM_PERIOD,CM_CERTIFICATE_URL,CM_INVALID,CM_REMARK,
+    	CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON) values(#{mgrId},#{certName},#{certType},#{certNo},
+    	#{certUnit},#{start},#{end},#{period},#{certUrl},#{invalid},#{remark},#{modifyDate},#{modifier})
+	</insert>
+	
+	<!--根据主键查询证照信息-->
+	<select id="getCertByKey" resultMap="BaseResultMap" parameterType="int">
+		select * from gzcrm_certificate where CM_KEY=#{cmKey}
+	</select>
+
+	<!--修改证照信息-->
+	<update id="updateMgrCert" parameterType="mgrCertificate">
+		update gzcrm_certificate set CM_CERTIFICATE_NAME=#{certName},CM_CERTIFICATE_TYPE=#{certType},
+		CM_CERTIFICATE_NO=#{certNo},CM_CERTIFICATE_UNIT=#{certUnit},CM_START_DATE=#{start},CM_END_DATE=#{end},
+		CM_PERIOD=#{period},CM_CERTIFICATE_URL=#{certUrl},CM_INVALID=#{invalid},CM_REMARK=#{remark},
+		CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier} where cm_key=#{cmKey}
+	</update>
+	
+	<!--删除证照信息-->
+	<delete id="deleteMgrCert" parameterType="int[]">
+		delete from gzcrm_certificate where CM_KEY in
+		<foreach collection="array" item="keys" open="(" close=")" separator="," index="no">
+			#{keys}
+		</foreach>
+	</delete>
+</mapper>

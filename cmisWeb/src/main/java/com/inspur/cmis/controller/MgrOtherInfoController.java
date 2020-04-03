@@ -21,10 +21,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.inspur.cmis.constant.Constant;
+import com.inspur.cmis.pojo.MgrCertificate;
+import com.inspur.cmis.pojo.MgrRpr;
 import com.inspur.cmis.pojo.MgrWorkHistory;
 import com.inspur.cmis.pojo.MgrWorkResult;
 import com.inspur.cmis.pojo.Param;
 import com.inspur.cmis.pojo.User;
+import com.inspur.cmis.service.MgrCertificateService;
+import com.inspur.cmis.service.MgrRprService;
 import com.inspur.cmis.service.MgrWorkHistoryService;
 import com.inspur.cmis.service.MgrWorkResultService;
 import com.inspur.cmis.service.ParamService;
@@ -33,6 +37,10 @@ import com.inspur.cmis.service.ParamService;
 public class MgrOtherInfoController {
 	@Autowired
 	private MgrWorkResultService mgrWorkResultService;
+	@Autowired
+	private MgrCertificateService mgrCertificateService;
+	@Autowired
+	private MgrRprService mgrRprService;
 	@Autowired
 	private MgrWorkHistoryService mgrWorkHistoryService;
 	@Autowired
@@ -45,8 +53,6 @@ public class MgrOtherInfoController {
 	public ModelAndView getAllInfoOtherByPage(int pageNum,HttpServletRequest requset) {
 		String mgrId = requset.getParameter("mgrId");
 		ModelAndView mv = new ModelAndView();
-		List<MgrWorkResult> resultList = new ArrayList<MgrWorkResult>();
-		List<MgrWorkHistory> workList = new ArrayList<MgrWorkHistory>();
 		
 		//获取登录人的角色，如果是客户经理，则将mgrId赋值为此客户经理的id，使其只能看到自己的信息
 		User user=(User)requset.getSession().getAttribute("user");
@@ -60,14 +66,28 @@ public class MgrOtherInfoController {
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("mgrId", mgrId);
 			map.put("cmWorkYear", cmWorkYear);
-			resultList = mgrWorkResultService.getWorkResultList(map);
+			List<MgrWorkResult> resultList = mgrWorkResultService.getWorkResultList(map);
 			mv.addObject("resultList", resultList);
+		} else if (pageNum == 2) {
+			String certName = requset.getParameter("certName");
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("mgrId", mgrId);
+			map.put("certName", certName);
+			List<MgrCertificate> certList = mgrCertificateService.getMgrCertList(map);
+			mv.addObject("certList", certList);
+		} else if (pageNum == 3) {
+			String type = requset.getParameter("type");
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("mgrId", mgrId);
+			map.put("type", type);
+			List<MgrRpr> rprList = mgrRprService.getMgrRprList(map);
+			mv.addObject("rprList", rprList);
 		} else if (pageNum == 7) {
 			String cmPostion = requset.getParameter("cmPostion");
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("mgrId", mgrId);
 			map.put("cmPostion", cmPostion);
-			workList = mgrWorkHistoryService.getMgrWorkList(map);
+			List<MgrWorkHistory> workList = mgrWorkHistoryService.getMgrWorkList(map);
 			mv.addObject("workList", workList);
 		}
 		mv.addObject("mgrId", mgrId);
@@ -168,22 +188,22 @@ public class MgrOtherInfoController {
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*
-	 * 2.添加
+	 * 2.添加证照信息
 	 */
 	
 	
 	/*
-	 * 2.根据cmKey查询
+	 * 2.根据cmKey查询证照信息
 	 */
 	
 	
 	/*
-	 * 2.修改
+	 * 2.修改证照信息
 	 */
 	
 	
 	/*
-	 * 2.删除
+	 * 2.删除证照信息
 	 */
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -360,8 +380,7 @@ public class MgrOtherInfoController {
 	@ModelAttribute("mgrLevel")
 	public Map<String, String> getMgrLevelList() {
 		Map<String, String> levelParam = new HashMap<String, String>();
-		List<Param> paramList = paramService
-				.getParamList(Constant.PARAM_TYPE_MGRLEVEL);
+		List<Param> paramList = paramService.getParamList(Constant.PARAM_TYPE_MGRLEVEL);
 		if (paramList != null && paramList.size() > 0) {
 			for (int i = 0; i < paramList.size(); i++) {
 				Param param = paramList.get(i);
@@ -370,5 +389,4 @@ public class MgrOtherInfoController {
 		}
 		return levelParam;
 	}
-
 }

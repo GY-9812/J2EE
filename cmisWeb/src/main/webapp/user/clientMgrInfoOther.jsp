@@ -179,17 +179,17 @@ Date.prototype.format = function(format) {
 			<c:if test="${pageNum==2}">
 			<div id="tab2" class="tabson">
 				<ul class="seachform">
-					<li><label>工作年度</label><input name="" type="text" class="scinput" /></li>
+					<li><label>证书名称</label><input name="certName" type="text" class="scinput" /></li>
 					<li><label>&nbsp;</label><input type="submit" class="scbtn" value="查询" /></li>
 				</ul>
 				<div class="tools">
 					<ul class="toolbar1">
 						<li><a href="javascript:openWindow(3)"><span><img src="<%=basePath%>images/t01.png" /></span>添加</a></li>
 						<li><a href="javascript:openWindow(4)"><span><img src="<%=basePath%>images/t02.png" /></span>修改</a></li>
-						<li><a href="javascript:oWorkPerformDel()"><span><img src="<%=basePath%>images/t03.png" /></span>删除</a></li>
+						<li><a href="javascript:oWorkPerformDel(2)"><span><img src="<%=basePath%>images/t03.png" /></span>删除</a></li>
 					</ul>
 				</div>
-				<table class="tablelist">
+				<table class="tablelist" id="certTable">
 					<thead>
 						<tr class="tablehead">
 							<td colspan="12">证照列表</td>
@@ -212,20 +212,21 @@ Date.prototype.format = function(format) {
 						</tr>
 					</thead>
 					<tbody>
-					  <c:forEach items="a" var="a">
+					  <c:forEach items="${certList}" var="cert">
 						<tr>
-							<td><input name="" type="checkbox" value="" /></td>
-							<td>Tom</td>
-							<td>从业资格证书</td>
-							<td>从业资格证书</td>
-							<td>082232008000911</td>
-							<td>全国计算机中心</td>
-							<td>2010-04-09</td>
-							<td></td>
-							<td>有效</td>
-							<td></td>
-							<td>2016-08-09</td>
-							<td>admin</td>
+							<td><input name="key" type="checkbox" value="${cert.cmKey}" data-id="${cert.cmKey}"/></td>
+							<td>${cert.mgrName}</td>
+							<td>${cert.certName}</td>
+							<td>${cert.certType}</td>
+							<td>${cert.certNo}</td>
+							<td>${cert.certUnit}</td>
+							<td><fmt:formatDate value="${cert.start}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
+							<td><fmt:formatDate value="${cert.end}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
+							<td><c:if test="${cert.period=='T'}">有效</c:if>
+								<c:if test="${cert.period=='F'}">无效</c:if></td>
+							<td>${cert.invalid}</td>
+							<td><fmt:formatDate value="${cert.modifyDate}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
+							<td>${cert.modifierName}</td>
 						</tr>
 					  </c:forEach>
 					</tbody>
@@ -236,17 +237,17 @@ Date.prototype.format = function(format) {
 			<c:if test="${pageNum==3}">
 			<div id="tab3" class="tabson">
 				<ul class="seachform">
-					<li><label>奖惩分类</label><input name="" type="text" class="scinput" /></li>
-					<li><label>&nbsp;</label><input name="" type="button" class="scbtn" value="查询" /></li>
+					<li><label>奖惩分类</label><input name="type" type="text" class="scinput" /></li>
+					<li><label>&nbsp;</label><input type="submit" class="scbtn" value="查询" /></li>
 				</ul>
 				<div class="tools">
 					<ul class="toolbar1">
 						<li><a href="javascript:openWindow(5)"><span><img src="<%=basePath%>images/t01.png" /></span>添加</a></li>
 						<li><a href="javascript:openWindow(6)"><span><img src="<%=basePath%>images/t02.png" /></span>修改</a></li>
-						<li><a href="javascript:oWorkPerformDel()"><span><img src="<%=basePath%>images/t03.png" /></span>删除</a></li>
+						<li><a href="javascript:oWorkPerformDel(3)"><span><img src="<%=basePath%>images/t03.png" /></span>删除</a></li>
 					</ul>
 				</div>
-				<table class="tablelist">
+				<table class="tablelist" id="rprTable">
 					<thead>
 						<tr class="tablehead">
 							<td colspan="12">奖惩记录</td>
@@ -269,20 +270,20 @@ Date.prototype.format = function(format) {
 						</tr>
 					</thead>
 					<tbody>
-					  <c:forEach items="a" var="a">
+					  <c:forEach items="${rprList}" var="rpr">
 						<tr>
-							<td><input name="" type="checkbox" value="" /></td>
-							<td>Tom</td>
-							<td>优秀员工</td>
-							<td>现金5000元</td>
-							<td>2016-01-01</td>
-							<td>贵州省分公司</td>
-							<td>admin</td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td>2016-04-09</td>
-							<td>admin</td>
+							<td><input name="key" type="checkbox" value="${rpr.cmKey}" data-id="${rpr.cmKey}"/></td>
+							<td>${rpr.mgrName}</td>
+							<td>${rpr.type}</td>
+							<td>${rpr.sub}</td>
+							<td><fmt:formatDate value="${rpr.date}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
+							<td>${rpr.aUnit}</td>
+							<td>${rpr.aPerson}</td>
+							<td><fmt:formatDate value="${rpr.rDate}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
+							<td>${rpr.aReason}</td>
+							<td><a href="<%=basePath%>downLoadFile?fileName=${rpr.attach}" class="tablelink">${rpr.attach}</a></td>
+							<td><fmt:formatDate value="${rpr.modifyDate}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
+							<td>${rpr.modifierName}</td>
 						</tr>
 					  </c:forEach>
 					</tbody>
@@ -294,13 +295,13 @@ Date.prototype.format = function(format) {
 			<div id="tab4" class="tabson">
 				<ul class="seachform">
 					<li><label>考核时间</label><input name="" type="text" class="scinput" /></li>
-					<li><label>&nbsp;</label><input name="" type="button" class="scbtn" value="查询" /></li>
+					<li><label>&nbsp;</label><input type="submit" class="scbtn" value="查询" /></li>
 				</ul>
 				<div class="tools">
 					<ul class="toolbar1">
 						<li><a href="javascript:openWindow(7)"><span><img src="<%=basePath%>images/t01.png" /></span>添加</a></li>
 						<li><a href="javascript:openWindow(8)"><span><img src="<%=basePath%>images/t02.png" /></span>修改</a></li>
-						<li><a href="javascript:oWorkPerformDel()"><span><img src="<%=basePath%>images/t03.png" /></span>删除</a></li>
+						<li><a href="javascript:oWorkPerformDel(4)"><span><img src="<%=basePath%>images/t03.png" /></span>删除</a></li>
 					</ul>
 				</div>
 				<table class="tablelist">
@@ -346,13 +347,13 @@ Date.prototype.format = function(format) {
 				<ul class="seachform">
 					<li><label>培训时间</label><input name="" type="text" class="scinput" /></li>
 					<li><label>科目</label><input name="" type="text" class="scinput" /></li>
-					<li><label>&nbsp;</label><input name="" type="button" class="scbtn" value="查询" /></li>
+					<li><label>&nbsp;</label><input type="submit" class="scbtn" value="查询" /></li>
 				</ul>
 				<div class="tools">
 					<ul class="toolbar1">
 						<li><a href="javascript:openWindow(9)"><span><img src="<%=basePath%>images/t01.png" /></span>添加</a></li>
 						<li><a href="javascript:openWindow(10)"><span><img src="<%=basePath%>images/t02.png" /></span>修改</a></li>
-						<li><a href="javascript:oWorkPerformDel()"><span><img src="<%=basePath%>images/t03.png" /></span>删除</a></li>
+						<li><a href="javascript:oWorkPerformDel(5)"><span><img src="<%=basePath%>images/t03.png" /></span>删除</a></li>
 					</ul>
 				</div>
 				<table class="tablelist">
@@ -406,13 +407,13 @@ Date.prototype.format = function(format) {
 				<ul class="seachform">
 					<li><label>认定时间</label><input name="" type="text" class="scinput" /></li>
 					<li><label>认定级别</label><input name="" type="text" class="scinput" /></li>
-					<li><label>&nbsp;</label><input name="" type="button" class="scbtn" value="查询" /></li>
+					<li><label>&nbsp;</label><input type="submit" class="scbtn" value="查询" /></li>
 				</ul>
 				<div class="tools">
 					<ul class="toolbar1">
 						<li><a href="javascript:openWindow(11)"><span><img src="<%=basePath%>images/t01.png" /></span>添加</a></li>
 						<li><a href="javascript:openWindow(12)"><span><img src="<%=basePath%>images/t02.png" /></span>修改</a></li>
-						<li><a href="javascript:oWorkPerformDel()"><span><img src="<%=basePath%>images/t03.png" /></span>删除</a></li>
+						<li><a href="javascript:oWorkPerformDel(6)"><span><img src="<%=basePath%>images/t03.png" /></span>删除</a></li>
 					</ul>
 				</div>
 				<table class="tablelist">
@@ -454,8 +455,16 @@ Date.prototype.format = function(format) {
 			<c:if test="${pageNum==7}">
 			<div id="tab7" class="tabson">
 			    <ul class="seachform">
-				    <li><label>职务</label><input name="cmPostion" type="text" class="scinput"/></li>
-				    <li><label>&nbsp;</label><input type="button" class="scbtn" value="查询"/></li>
+				    <li><label>职务</label>
+						<div class="vocation">
+							<select class="select2" name="cmPostion">
+								<option value="">请选择</option>
+								<c:forEach items="${mgrLevel}" var="level">
+									<option value="${level.key}" <c:if test="${level.key eq lev}">selected</c:if>>${level.value}</option>		
+								</c:forEach>
+							</select>
+						</div></li>
+					<li><label>&nbsp;</label><input type="submit" class="scbtn" value="查询" /></li>
 			    </ul>
 			    <div class="tools">
 			    	<ul class="toolbar1">
@@ -607,7 +616,7 @@ Date.prototype.format = function(format) {
 					        		 //$("#workcmPostion option[value='"+data[0].cmPostion+"']").prop("selected",true);
 					        		 //$('#workcmPostion').find("option[value="+data[0].cmPostion+"]").attr("selected",true);
 					        		 $('#workcmPostion').find("option[value='02']").attr("selected",true);
-					        		// $("#workcmPostion").val(data[0].cmPostion).attr("selected",true);
+					        		 // $("#workcmPostion").val(data[0].cmPostion).attr("selected",true);
 					        		 $("#workUnit").val(data[0].cmUnit);
 					        		 $("#workWork").val(data[0].cmWork);
 					        		 $("#workAttach").text(data[0].cmAttach);
