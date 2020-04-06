@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inspur.cmis.mapper.MgrLevelMapper">
+	<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.MgrLevels" >
+	    <result column="CM_KEY" property="cmKey"/>
+	    <result column="CM_ID" property="mgrId"/>
+	    <result column="CM_HOLD_DATE" property="date"/>
+	    <result column="CM_HOLD_LEVEL" property="level"/>
+	    <result column="CM_HOLD_TPYE" property="type"/>
+	    <result column="CM_ATTACHMENT" property="attach"/>
+	    <result column="CM_MODIFICATION_DATE" property="modifyDate"/>
+	    <result column="CM_MODIFICATION_PERSON" property="modifier"/>
+	</resultMap>
+
+	<!--默认查询及条件查询-->
+	<sql id="selectSql">
+     	CM_KEY cmKey,CM_ID mgrId,CM_HOLD_DATE date,CM_HOLD_LEVEL level,CM_HOLD_TPYE type,
+     	CM_ATTACHMENT attach,CM_MODIFICATION_DATE modifyDate,CM_MODIFICATION_PERSON modifier,
+     	(select CM_NAME from gzcrm_cminfo where CM_ID=a.CM_ID) mgrName,
+     	(select CNAME from yc_member where MEM_ID=a.CM_MODIFICATION_PERSON) modifierName
+  	</sql>
+	<select id="getMgrLevelList" resultType="mgrLevelsExt" parameterType="Map">
+    	select <include refid="selectSql"/> from gzcrm_cmlevel a where 1=1 
+      	<if test="mgrId != '' and mgrId != null">
+          	and CM_ID = #{mgrId}
+      	</if>
+		<if test="date != null and date != ''">
+		  and CM_HOLD_DATE like '%' #{date} '%'
+		</if>
+		<if test="level != null and level != ''">
+		  and CM_HOLD_LEVEL=#{level}
+		</if>
+  	</select>
+
+	<!--添加等级认定记录-->
+	<insert id="addMgrLevel" parameterType="mgrLevels">
+    	insert into gzcrm_cmlevel(CM_ID,CM_HOLD_DATE,CM_HOLD_LEVEL,CM_HOLD_TPYE,CM_ATTACHMENT,CM_MODIFICATION_DATE,
+    	CM_MODIFICATION_PERSON) values(#{mgrId},#{date},#{level},#{type},#{attach},#{modifyDate},#{modifier})
+	</insert>
+	
+	<!--根据主键查询等级认定记录-->
+	<select id="getLevelByKey" resultMap="BaseResultMap" parameterType="int">
+		select * from gzcrm_cmlevel where CM_KEY=#{cmKey}
+	</select>
+
+	<!--修改等级认定记录-->
+	<update id="updateMgrLevel" parameterType="mgrLevels">
+		update gzcrm_cmlevel set CM_HOLD_DATE=#{date},CM_HOLD_LEVEL=#{level},CM_HOLD_TPYE=#{type},
+		CM_ATTACHMENT=#{attach},CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier} where CM_KEY=#{cmKey}
+	</update>
+	
+	<!--删除等级认定记录-->
+	<delete id="deleteMgrLevel" parameterType="int[]">
+		delete from gzcrm_cmlevel where CM_KEY in
+		<foreach collection="array" item="keys" open="(" close=")" separator="," index="no">
+			#{keys}
+		</foreach>
+	</delete>
+</mapper>

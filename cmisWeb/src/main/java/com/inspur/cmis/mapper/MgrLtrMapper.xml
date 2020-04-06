@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inspur.cmis.mapper.MgrLtrMapper">
+	<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.MgrLtr" >
+	    <result column="CM_KEY" property="cmKey"/>
+	    <result column="CM_ID" property="mgrId"/>
+	    <result column="CM_TDATE" property="date"/>
+	    <result column="CM_SUB" property="sub"/>
+	    <result column="CM_TUNIT" property="unit"/>
+	    <result column="CM_STARTDATE" property="start"/>
+	    <result column="CM_ENDDATE" property="end"/>
+	    <result column="CM_KNOW" property="know"/>
+	    <result column="CM_CREDIT" property="credit"/>
+	    <result column="CM_SCORE" property="score"/>
+	    <result column="CM_REMARK" property="remark"/>
+	    <result column="CM_ATTACHMENT" property="attach"/>
+	    <result column="CM_MODIFICATION_DATE" property="modifyDate"/>
+	    <result column="CM_MODIFICATION_PERSON" property="modifier"/>
+	</resultMap>
+
+	<!--默认查询及条件查询-->
+	<sql id="selectSql">
+     	CM_KEY cmKey,CM_ID mgrId,CM_TDATE date,CM_SUB sub,CM_TUNIT unit,CM_STARTDATE start,
+     	CM_ENDDATE end,CM_KNOW know,CM_CREDIT credit,CM_SCORE score,CM_REMARK remark,
+     	CM_ATTACHMENT attach,CM_MODIFICATION_DATE modifyDate,CM_MODIFICATION_PERSON modifier,
+     	(select CM_NAME from gzcrm_cminfo where CM_ID=a.CM_ID) mgrName,
+     	(select CNAME from yc_member where MEM_ID=a.CM_MODIFICATION_PERSON) modifierName
+  	</sql>
+	<select id="getMgrLtrList" resultType="mgrLtrExt" parameterType="Map">
+    	select <include refid="selectSql"/> from gzcrm_cmltr a where 1=1 
+      	<if test="mgrId != '' and mgrId != null">
+          	and CM_ID =#{mgrId}
+      	</if>
+		<if test="date != null and date != ''">
+		  and CM_TDATE like '%' #{date} '%'
+		</if>
+		<if test="sub != null and sub != ''">
+		  and CM_SUB like '%' #{sub} '%'
+		</if>
+  	</select>
+
+	<!--添加学习培训记录-->
+	<insert id="addMgrLtr" parameterType="mgrLtr">
+    	insert into gzcrm_cmltr(CM_ID,CM_TDATE,CM_SUB,CM_TUNIT,CM_STARTDATE,CM_ENDDATE,CM_KNOW,
+    	CM_CREDIT,CM_SCORE,CM_REMARK,CM_ATTACHMENT,CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON) 
+    	values(#{mgrId},#{date},#{sub},#{unit},#{start},#{end},#{know},#{credit},#{score},#{remark},#{attach},#{modifyDate},#{modifier})
+	</insert>
+	
+	<!--根据主键查询学习培训记录-->
+	<select id="getLtrByKey" resultMap="BaseResultMap" parameterType="int">
+		select * from gzcrm_cmltr where CM_KEY=#{cmKey}
+	</select>
+
+	<!--修改学习培训记录-->
+	<update id="updateMgrLtr" parameterType="mgrLtr">
+		update gzcrm_cmltr set CM_TDATE=#{date},CM_SUB=#{sub},CM_TUNIT=#{unit},CM_STARTDATE=#{start},CM_ENDDATE=#{end},
+		CM_KNOW=#{know},CM_CREDIT=#{credit},CM_SCORE=#{score},CM_REMARK=#{remark},CM_ATTACHMENT=#{attach},
+		CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier} where CM_KEY=#{cmKey}
+	</update>
+	
+	<!--删除学习培训记录-->
+	<delete id="deleteMgrLtr" parameterType="int[]">
+		delete from gzcrm_cmltr where CM_KEY in
+		<foreach collection="array" item="keys" open="(" close=")" separator="," index="no">
+			#{keys}
+		</foreach>
+	</delete>
+</mapper>

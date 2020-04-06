@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inspur.cmis.mapper.MgrMassMapper">
+	<resultMap id="BaseResultMap" type="com.inspur.cmis.pojo.MgrMass" >
+	    <result column="CM_KEY" property="cmKey"/>
+	    <result column="CM_ID" property="mgrId"/>
+	    <result column="CM_ASSTIME" property="time"/>
+	    <result column="CM_ASSUB" property="sub"/>
+	    <result column="CM_ASSPERIOD" property="period"/>
+	    <result column="CM_ASSRESULT" property="result"/>
+	    <result column="CM_APPRAISAL" property="app"/>
+	    <result column="CM_ASSUNIT" property="unit"/>
+	    <result column="CM_REMARK" property="remark"/>
+	    <result column="CM_ATTACHMENT" property="attach"/>
+	    <result column="CM_MODIFICATION_DATE" property="modifyDate"/>
+	    <result column="CM_MODIFICATION_PERSON" property="modifier"/>
+	</resultMap>
+
+	<!--默认查询及条件查询-->
+	<sql id="selectSql">
+     	CM_KEY cmKey,CM_ID mgrId,CM_ASSTIME time,CM_ASSUB sub,CM_ASSPERIOD period,
+     	CM_ASSRESULT result,CM_APPRAISAL app,CM_ASSUNIT unit,CM_REMARK remark,
+     	CM_ATTACHMENT attach,CM_MODIFICATION_DATE modifyDate,CM_MODIFICATION_PERSON modifier,
+     	(select CM_NAME from gzcrm_cminfo where CM_ID=a.CM_ID) mgrName,
+     	(select CNAME from yc_member where MEM_ID=a.CM_MODIFICATION_PERSON) modifierName
+  	</sql>
+	<select id="getMgrMassList" resultType="mgrMassExt" parameterType="Map">
+    	select <include refid="selectSql"/> from gzcrm_cmass a where 1=1 
+      	<if test="mgrId != '' and mgrId != null">
+          	and CM_ID =#{mgrId}
+      	</if>
+		<if test="time != null and time != ''">
+		  and CM_ASSTIME like '%' #{time} '%'
+		</if>
+  	</select>
+
+	<!--添加考核记录-->
+	<insert id="addMgrMass" parameterType="mgrMass">
+    	insert into gzcrm_cmass(CM_ID,CM_ASSTIME,CM_ASSUB,CM_ASSPERIOD,CM_ASSRESULT,CM_APPRAISAL,
+    	CM_ASSUNIT,CM_REMARK,CM_ATTACHMENT,CM_MODIFICATION_DATE,CM_MODIFICATION_PERSON) 
+	    values(#{mgrId},#{time},#{sub},#{period},#{result},#{app},#{unit},#{remark},#{attach},#{modifyDate},#{modifier})
+	</insert>
+	
+	<!--根据主键查询考核记录-->
+	<select id="getMassByKey" resultMap="BaseResultMap" parameterType="int">
+		select * from gzcrm_cmass where CM_KEY=#{cmKey}
+	</select>
+
+	<!--修改考核记录-->
+	<update id="updateMgrMass" parameterType="mgrMass">
+		update gzcrm_cmass set CM_ASSTIME=#{time},CM_ASSUB=#{sub},CM_ASSPERIOD=#{period},CM_ASSRESULT=#{result},
+		CM_APPRAISAL=#{app},CM_ASSUNIT=#{unit},CM_REMARK=#{remark},CM_ATTACHMENT=#{attach},
+		CM_MODIFICATION_DATE=#{modifyDate},CM_MODIFICATION_PERSON=#{modifier} where CM_KEY=#{cmKey}
+	</update>
+	
+	<!--删除考核记录-->
+	<delete id="deleteMgrMass" parameterType="int[]">
+		delete from gzcrm_cmass where CM_KEY in
+		<foreach collection="array" item="keys" open="(" close=")" separator="," index="no">
+			#{keys}
+		</foreach>
+	</delete>
+</mapper>

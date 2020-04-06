@@ -2,14 +2,10 @@ package com.inspur.cmis.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,12 +20,18 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.inspur.cmis.constant.Constant;
 import com.inspur.cmis.pojo.MgrCertificate;
+import com.inspur.cmis.pojo.MgrLevels;
+import com.inspur.cmis.pojo.MgrLtr;
+import com.inspur.cmis.pojo.MgrMass;
 import com.inspur.cmis.pojo.MgrRpr;
 import com.inspur.cmis.pojo.MgrWorkHistory;
 import com.inspur.cmis.pojo.MgrWorkResult;
 import com.inspur.cmis.pojo.Param;
 import com.inspur.cmis.pojo.User;
 import com.inspur.cmis.service.MgrCertificateService;
+import com.inspur.cmis.service.MgrLevelService;
+import com.inspur.cmis.service.MgrLtrService;
+import com.inspur.cmis.service.MgrMassService;
 import com.inspur.cmis.service.MgrRprService;
 import com.inspur.cmis.service.MgrWorkHistoryService;
 import com.inspur.cmis.service.MgrWorkResultService;
@@ -43,6 +45,12 @@ public class MgrOtherInfoController {
 	private MgrCertificateService mgrCertificateService;
 	@Autowired
 	private MgrRprService mgrRprService;
+	@Autowired
+	private MgrMassService mgrMassService;
+	@Autowired
+	private MgrLtrService mgrLtrService;
+	@Autowired
+	private MgrLevelService mgrLevelService;
 	@Autowired
 	private MgrWorkHistoryService mgrWorkHistoryService;
 	@Autowired
@@ -86,6 +94,34 @@ public class MgrOtherInfoController {
 			map.put("type", type);
 			List<MgrRpr> rprList = mgrRprService.getMgrRprList(map);
 			mv.addObject("rprList", rprList);
+		}
+		if (pageNum == 4) {
+			String time = requset.getParameter("time");
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("mgrId", mgrId);
+			map.put("time", time);
+			List<MgrMass> massList = mgrMassService.getMgrMassList(map);
+			mv.addObject("massList", massList);
+		}
+		if (pageNum == 5) {
+			String date = requset.getParameter("date");
+			String sub = requset.getParameter("sub");
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("mgrId", mgrId);
+			map.put("date", date);
+			map.put("sub", sub);
+			List<MgrLtr> ltrList = mgrLtrService.getMgrLtrList(map);
+			mv.addObject("ltrList", ltrList);
+		}
+		if (pageNum == 6) {
+			String date = requset.getParameter("date");
+			String level = requset.getParameter("level");
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("mgrId", mgrId);
+			map.put("date", date);
+			map.put("level", level);
+			List<MgrLevels> levelList = mgrLevelService.getMgrLevelList(map);
+			mv.addObject("levelList", levelList);
 		}
 		if (pageNum == 7) {
 			String cmPostion = requset.getParameter("cmPostion");
@@ -170,7 +206,7 @@ public class MgrOtherInfoController {
 		if (fileName!="") {
 			work.setCmAttach(fileName);
 		}
-		// 1.获取当前时间
+		//获取当前时间
 		Date today = new Date();
 		work.setModifyDate(today);
 		mgrWorkResultService.updateWorkResult(work);
@@ -269,7 +305,7 @@ public class MgrOtherInfoController {
 		if (fileName!="") {
 			cert.setCertUrl(fileName);
 		}
-		// 1.获取当前时间
+		//获取当前时间
 		Date today = new Date();
 		cert.setModifyDate(today);
 		//检验证书是否已失效
@@ -300,7 +336,9 @@ public class MgrOtherInfoController {
 	}
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//3.查询审批人姓名是否存在
+	/*
+	 * 3.查询审批人姓名是否存在
+	 */
 	@RequestMapping("/checkaPerson")
 	@ResponseBody
 	public Map checkaPerson(String aPerson) {
@@ -387,7 +425,7 @@ public class MgrOtherInfoController {
 		if (fileName!="") {
 			rpr.setAttach(fileName);
 		}
-		// 1.获取当前时间
+		//获取当前时间
 		Date today = new Date();
 		rpr.setModifyDate(today);
 		//获取审批人的id
@@ -415,63 +453,277 @@ public class MgrOtherInfoController {
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*
-	 * 4.添加
+	 * 4.添加考核记录
 	 */
-	
+	@RequestMapping("/addMgrMass")
+	public String addMgrMass(MgrMass mass,Model model,MultipartFile upload,HttpServletRequest request) {
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传图片物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		mass.setAttach(fileName);
+		//获取当前时间
+		Date today = new Date();
+		mass.setModifyDate(today);
+		mgrMassService.addMgrMass(mass);
+		return "redirect:clientMgrInfoOther?pageNum=4&mgrId="+mass.getMgrId();
+	}
 	
 	/*
-	 * 4.根据cmKey查询
+	 * 4.根据cmKey查询考核记录
 	 */
-	
+	@RequestMapping("/modifyMgrMass")
+	public @ResponseBody List<MgrMass> getMassByKey(int cmKey) {
+		List<MgrMass> massList = mgrMassService.getMassByKey(cmKey);
+		return massList;
+	}
 	
 	/*
-	 * 4.修改
+	 * 4.修改考核记录
 	 */
-	
+	@RequestMapping("/updateMgrMass")
+	public String updateMgrMass(MgrMass mass, Model model,MultipartFile upload,HttpServletRequest request) {
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传图片物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (fileName!="") {
+			mass.setAttach(fileName);
+		}
+		//获取当前时间
+		Date today = new Date();
+		mass.setModifyDate(today);
+		mgrMassService.updateMgrMass(mass);
+		return "redirect:clientMgrInfoOther?pageNum=4&mgrId="+mass.getMgrId();
+	}
 	
 	/*
-	 * 4.删除
+	 * 4.删除考核记录
 	 */
+	@RequestMapping("/deleteMgrMass")
+	public String deleteMgrMass(String keys,int mgrId) {
+		String key[]=keys.split(",");
+		int key1[]=new int[key.length];
+		for(int i=0;i<key.length;i++) {
+			key1[i]=Integer.parseInt(key[i]);
+		}
+		mgrMassService.deleteMgrMass(key1);
+		return "redirect:clientMgrInfoOther?pageNum=4&mgrId="+mgrId;
+	}
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*
-	 * 5.添加
+	 * 5.添加学习培训记录
 	 */
+	@RequestMapping("/addMgrLtr")
+	public String addMgrLtr(MgrLtr ltr,Model model,MultipartFile upload,HttpServletRequest request) {
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传图片物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ltr.setAttach(fileName);
+		//获取当前时间
+		Date today = new Date();
+		ltr.setModifyDate(today);
+		mgrLtrService.addMgrLtr(ltr);
+		return "redirect:clientMgrInfoOther?pageNum=5&mgrId="+ltr.getMgrId();
+	}
+	
+	/*
+	 * 5.根据cmKey查询学习培训记录
+	 */
+	@RequestMapping("/modifyMgrLtr")
+	public @ResponseBody List<MgrLtr> getLtrByKey(int cmKey) {
+		List<MgrLtr> ltrList = mgrLtrService.getLtrByKey(cmKey);
+		return ltrList;
+	}
+	
+	/*
+	 * 5.修改学习培训记录
+	 */
+	@RequestMapping("/updateMgrLtr")
+	public String updateMgrLtr(MgrLtr ltr, Model model,MultipartFile upload,HttpServletRequest request) {
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传图片物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (fileName!="") {
+			ltr.setAttach(fileName);
+		}
+		//获取当前时间
+		Date today = new Date();
+		ltr.setModifyDate(today);
+		mgrLtrService.updateMgrLtr(ltr);
+		return "redirect:clientMgrInfoOther?pageNum=5&mgrId="+ltr.getMgrId();
+	}
 	
 	
 	/*
-	 * 5.根据cmKey查询
+	 * 5.删除学习培训记录
 	 */
-	
-	
-	/*
-	 * 5.修改
-	 */
-	
-	
-	/*
-	 * 5.删除
-	 */
+	@RequestMapping("/deleteMgrLtr")
+	public String deleteMgrLtr(String keys,int mgrId) {
+		String key[]=keys.split(",");
+		int key1[]=new int[key.length];
+		for(int i=0;i<key.length;i++) {
+			key1[i]=Integer.parseInt(key[i]);
+		}
+		mgrLtrService.deleteMgrLtr(key1);
+		return "redirect:clientMgrInfoOther?pageNum=5&mgrId="+mgrId;
+	}
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*
-	 * 6.添加
+	 * 6.添加等级认定记录
 	 */
-	
+	@RequestMapping("/addMgrLevel")
+	public String addMgrLevel(MgrLevels level,Model model,MultipartFile upload,HttpServletRequest request) {
+		System.out.println("1================");
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传图片物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		level.setAttach(fileName);
+		System.out.println("2================");
+		//获取当前时间
+		Date today = new Date();
+		level.setModifyDate(today);
+		mgrLevelService.addMgrLevel(level);
+		System.out.println("3================");
+		return "redirect:clientMgrInfoOther?pageNum=6&mgrId="+level.getMgrId();
+	}
 	
 	/*
-	 * 6.根据cmKey查询
+	 * 6.根据cmKey查询等级认定记录
 	 */
-	
+	@RequestMapping("/modifyMgrLevel")
+	public @ResponseBody List<MgrLevels> getLevelByKey(int cmKey) {
+		List<MgrLevels> levelList = mgrLevelService.getLevelByKey(cmKey);
+		return levelList;
+	}
 	
 	/*
-	 * 6.修改
+	 * 6.修改等级认定记录
 	 */
-	
+	@RequestMapping("/updateMgrLevel")
+	public String updateMgrLevel(MgrLevels level, Model model,MultipartFile upload,HttpServletRequest request) {
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传图片物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (fileName!="") {
+			level.setAttach(fileName);
+		}
+		//获取当前时间
+		Date today = new Date();
+		level.setModifyDate(today);
+		mgrLevelService.updateMgrLevel(level);
+		return "redirect:clientMgrInfoOther?pageNum=6&mgrId="+level.getMgrId();
+	}
 	
 	/*
-	 * 6.删除
+	 * 6.删除等级认定记录
 	 */
+	@RequestMapping("/deleteMgrLevel")
+	public String deleteMgrLevel(String keys,int mgrId) {
+		String key[]=keys.split(",");
+		int key1[]=new int[key.length];
+		for(int i=0;i<key.length;i++) {
+			key1[i]=Integer.parseInt(key[i]);
+		}
+		mgrLevelService.deleteMgrLevel(key1);
+		return "redirect:clientMgrInfoOther?pageNum=6&mgrId="+mgrId;
+	}
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*
@@ -542,7 +794,7 @@ public class MgrOtherInfoController {
 		if (fileName!="") {
 			hist.setCmAttach(fileName);
 		}
-		// 1.获取当前时间
+		//获取当前时间
 		Date today = new Date();
 		hist.setModifyDate(today);
 		mgrWorkHistoryService.updateWorkHist(hist);
