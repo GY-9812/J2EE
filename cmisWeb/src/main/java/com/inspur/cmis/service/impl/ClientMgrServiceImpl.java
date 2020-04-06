@@ -32,7 +32,7 @@ public class ClientMgrServiceImpl implements ClientMgrService{
 	}
 
 	@Override
-	public void deleteMgr(String[] cmid) {
+	public void deleteMgr(int[] cmid) {
 		clientMgrMapper.deleteMgr(cmid);
 	}
 

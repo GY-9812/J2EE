@@ -35,9 +35,9 @@
 		</if>
 	</select>
 	
-	<!--根据审批人姓名查询其id-->
-	<select id="getIdByName" parameterType="String" resultType="int">
-		select MEM_ID from yc_member where C_NAME=#{aPerson}
+	<!--根据审批人姓名查询其是否存在及其id-->
+	<select id="getUserByName" parameterType="String" resultType="String">
+		select MEM_ID from yc_member where CNAME=#{aPerson}
 	</select>
 	
 	<!--添加奖惩记录-->
@@ -49,7 +49,7 @@
 	
 	<!--根据主键查询奖惩记录-->
 	<select id="getRprByKey" resultMap="BaseResultMap" parameterType="int">
-		select * from gzcrm_cmrpr where CM_KEY=#{cmKey}
+		select <include refid="selectSql"/> from gzcrm_cmrpr a where CM_KEY=#{cmKey}
 	</select>
 
 	<!--修改奖惩记录-->

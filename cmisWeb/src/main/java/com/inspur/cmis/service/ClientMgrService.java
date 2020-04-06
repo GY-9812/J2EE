@@ -11,7 +11,7 @@ public interface ClientMgrService {
 	public List<ClientManager> getClientMgrList(HashMap<String, Object> map);
 	public void addMgr(ClientManager clientMgr);
 	public ClientManager getClientMgr(String cmid);
-	public void deleteMgr(String cmid[]);
+	public void deleteMgr(int cmid[]);
 	public ClientManager getClientMgrByCmid(int key);
 	public void updateClientMgr(ClientManager mgr);
 	//导入

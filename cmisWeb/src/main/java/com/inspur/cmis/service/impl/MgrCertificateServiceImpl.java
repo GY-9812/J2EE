@@ -18,4 +18,24 @@ public class MgrCertificateServiceImpl implements MgrCertificateService{
 	public List<MgrCertificate> getMgrCertList(HashMap<String, Object> map) {
 		return mgrCertificateMapper.getMgrCertList(map);
 	}
+
+	@Override
+	public void addMgrCert(MgrCertificate cert) {
+		mgrCertificateMapper.addMgrCert(cert);
+	}
+
+	@Override
+	public List<MgrCertificate> getCertByKey(int cmKey) {
+		return mgrCertificateMapper.getCertByKey(cmKey);
+	}
+
+	@Override
+	public void updateMgrCert(MgrCertificate cert) {
+		mgrCertificateMapper.updateMgrCert(cert);
+	}
+
+	@Override
+	public void deleteMgrCert(int[] keys) {
+		mgrCertificateMapper.deleteMgrCert(keys);
+	}
 }

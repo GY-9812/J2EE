@@ -100,8 +100,9 @@ public class ClientMgrController {
      * 客户经理删除
      */
 	@RequestMapping("/deleteMgr")
-	public String deleteMgr(String cmid[]) {
+	public String deleteMgr(int cmid[]) {
 		clientMgrService.deleteMgr(cmid);
+		userService.deleteUser(cmid);
 		return "redirect:clientMgrList";
 	}
 	

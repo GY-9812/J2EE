@@ -2,6 +2,8 @@ package com.inspur.cmis.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,21 +70,24 @@ public class MgrOtherInfoController {
 			map.put("cmWorkYear", cmWorkYear);
 			List<MgrWorkResult> resultList = mgrWorkResultService.getWorkResultList(map);
 			mv.addObject("resultList", resultList);
-		} else if (pageNum == 2) {
-			String certName = requset.getParameter("certName");
+		}
+		if (pageNum == 2) {
+			String certType = requset.getParameter("certType");
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("mgrId", mgrId);
-			map.put("certName", certName);
+			map.put("certType", certType);
 			List<MgrCertificate> certList = mgrCertificateService.getMgrCertList(map);
 			mv.addObject("certList", certList);
-		} else if (pageNum == 3) {
+		}
+		if (pageNum == 3) {
 			String type = requset.getParameter("type");
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("mgrId", mgrId);
 			map.put("type", type);
 			List<MgrRpr> rprList = mgrRprService.getMgrRprList(map);
 			mv.addObject("rprList", rprList);
-		} else if (pageNum == 7) {
+		}
+		if (pageNum == 7) {
 			String cmPostion = requset.getParameter("cmPostion");
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("mgrId", mgrId);
@@ -101,7 +106,7 @@ public class MgrOtherInfoController {
 	 * 1.添加年度工作业绩
 	 */
 	@RequestMapping("/mgrResultAdd")
-	public String mgrResultAdd(MgrWorkResult work, Model model,MultipartFile upload, HttpServletRequest request) {
+	public String mgrResultAdd(MgrWorkResult work,Model model,MultipartFile upload,HttpServletRequest request) {
 		String fileName = "";
 		try {// 原始文件名称
 			if (upload != null) {
@@ -142,7 +147,7 @@ public class MgrOtherInfoController {
 	 * 1.修改年度工作业绩
 	 */
 	@RequestMapping("/updateWorkResult")
-	public String updateWorkResult(MgrWorkResult work, Model model,MultipartFile upload, HttpServletRequest request) {
+	public String updateWorkResult(MgrWorkResult work, Model model,MultipartFile upload,HttpServletRequest request) {
 		String fileName = "";
 		try {// 原始文件名称
 			if (upload != null) {
@@ -190,41 +195,223 @@ public class MgrOtherInfoController {
 	/*
 	 * 2.添加证照信息
 	 */
-	
+	@RequestMapping("/addMgrCert")
+	public String addMgrCert(MgrCertificate cert, Model model,MultipartFile upload,HttpServletRequest request,Date end) {
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传图片物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		cert.setCertUrl(fileName);
+		//获取当前时间
+		Date today = new Date();
+		cert.setModifyDate(today);
+		//检验证书是否已失效
+		if(!end.equals("")){
+			int i=today.compareTo(end);
+			if (i>0) {
+				cert.setPeriod("F");
+				cert.setInvalid("已作废");
+			}else 
+				cert.setPeriod("T");
+		}
+		mgrCertificateService.addMgrCert(cert);
+		return "redirect:clientMgrInfoOther?pageNum=2&mgrId="+cert.getMgrId();
+	}
 	
 	/*
 	 * 2.根据cmKey查询证照信息
 	 */
-	
+	@RequestMapping("/modifyMgrCert")
+	public @ResponseBody List<MgrCertificate> getCertByKey(int cmKey) {
+		List<MgrCertificate> certList = mgrCertificateService.getCertByKey(cmKey);
+		return certList;
+	}
 	
 	/*
 	 * 2.修改证照信息
 	 */
-	
+	@RequestMapping("/updateMgrCert")
+	public String updateMgrCert(MgrCertificate cert, Model model,MultipartFile upload,HttpServletRequest request,Date end) {
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传图片物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (fileName!="") {
+			cert.setCertUrl(fileName);
+		}
+		// 1.获取当前时间
+		Date today = new Date();
+		cert.setModifyDate(today);
+		//检验证书是否已失效
+		if(!end.equals("")){
+			int i=today.compareTo(end);
+			if (i>0) {
+				cert.setPeriod("F");
+				cert.setInvalid("已作废");
+			}else 
+				cert.setPeriod("T");
+		}
+		mgrCertificateService.updateMgrCert(cert);
+		return "redirect:clientMgrInfoOther?pageNum=2&mgrId="+cert.getMgrId();
+	}
 	
 	/*
 	 * 2.删除证照信息
 	 */
+	@RequestMapping("/deleteMgrCert")
+	public String deleteMgrCert(String keys,int mgrId) {
+		String key[]=keys.split(",");
+		int key1[]=new int[key.length];
+		for(int i=0;i<key.length;i++) {
+			key1[i]=Integer.parseInt(key[i]);
+		}
+		mgrCertificateService.deleteMgrCert(key1);
+		return "redirect:clientMgrInfoOther?pageNum=2&mgrId="+mgrId;
+	}
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//3.查询审批人姓名是否存在
+	@RequestMapping("/checkaPerson")
+	@ResponseBody
+	public Map checkaPerson(String aPerson) {
+		String userId = mgrRprService.getUserByName(aPerson);
+		Map map = new HashMap();
+		if (userId==null) {
+			map.put("msg", "该客户经理不存在，请输入正确的审批人姓名！");
+		}
+		return map;
+	}
+		
 	/*
-	 * 3.添加
+	 * 3.添加奖惩记录
 	 */
-	
+	@RequestMapping("/addMgrRpr")
+	public String addMgrRpr(MgrRpr rpr,Model model,MultipartFile upload,HttpServletRequest request,String aPerson) {
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传图片物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("================"+fileName+"--------------");
+		rpr.setAttach(fileName);
+		//获取当前时间
+		Date today = new Date();
+		rpr.setModifyDate(today);
+		//获取审批人的id
+		String userId=mgrRprService.getUserByName(aPerson);
+		if (userId!=null) {
+			rpr.setaPerson(userId);
+		}
+		mgrRprService.addMgrRpr(rpr);
+		return "redirect:clientMgrInfoOther?pageNum=3&mgrId="+rpr.getMgrId();
+	}
 	
 	/*
-	 * 3.根据cmKey查询
+	 * 3.根据cmKey查询奖惩记录
 	 */
-	
+	@RequestMapping("/modifyMgrRpr")
+	public @ResponseBody List<MgrRpr> getRprByKey(int cmKey) {
+		List<MgrRpr> rprList = mgrRprService.getRprByKey(cmKey);
+		System.out.println(rprList);
+		return rprList;
+	}
 	
 	/*
-	 * 3.修改
+	 * 3.修改奖惩记录
 	 */
-	
+	@RequestMapping("/updateMgrRpr")
+	public String updateMgrRpr(MgrRpr rpr, Model model,MultipartFile upload,HttpServletRequest request,String aPerson) {
+		String fileName = "";
+		try {// 原始文件名称
+			if (upload != null) {
+				fileName = upload.getOriginalFilename();
+				// 上传图片物理路径
+				String url = request.getSession().getServletContext().getRealPath("/upload/meet");
+				File uploadfile = new java.io.File(url + "/" + fileName);
+				if (!uploadfile.exists()) {
+					uploadfile.mkdirs();
+				}
+				upload.transferTo(uploadfile);
+			}
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (fileName!="") {
+			rpr.setAttach(fileName);
+		}
+		// 1.获取当前时间
+		Date today = new Date();
+		rpr.setModifyDate(today);
+		//获取审批人的id
+		String userId=mgrRprService.getUserByName(aPerson);
+		if (userId!=null) {
+			rpr.setaPerson(userId);
+		}
+		mgrRprService.updateMgrRpr(rpr);
+		return "redirect:clientMgrInfoOther?pageNum=3&mgrId="+rpr.getMgrId();
+	}
 	
 	/*
-	 * 3.删除
+	 * 3.删除奖惩记录
 	 */
+	@RequestMapping("/deleteMgrRpr")
+	public String deleteMgrRpr(String keys,int mgrId) {
+		String key[]=keys.split(",");
+		int key1[]=new int[key.length];
+		for(int i=0;i<key.length;i++) {
+			key1[i]=Integer.parseInt(key[i]);
+		}
+		mgrRprService.deleteMgrRpr(key1);
+		return "redirect:clientMgrInfoOther?pageNum=3&mgrId="+mgrId;
+	}
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*
@@ -332,7 +519,7 @@ public class MgrOtherInfoController {
 	 * 7.修改工作经历
 	 */
 	@RequestMapping("/updateWorkHistory")
-	public String updateWorkHistory(MgrWorkHistory hist, Model model,MultipartFile upload, HttpServletRequest request) {
+	public String updateWorkHistory(MgrWorkHistory hist,Model model,MultipartFile upload,HttpServletRequest request) {
 		String fileName = "";
 		try {// 原始文件名称
 			if (upload != null) {

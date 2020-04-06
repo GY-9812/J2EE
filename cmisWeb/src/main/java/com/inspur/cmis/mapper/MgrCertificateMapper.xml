@@ -31,8 +31,8 @@
 		<if test="mgrId != '' and mgrId != null">
 			and CM_ID =#{mgrId}
 		</if>
-		<if test="certName != null and certName != ''">
-		  and CM_CERTIFICATE_NAME like '%' #{certName} '%'
+		<if test="certType != null and certType != ''">
+		  and CM_CERTIFICATE_TYPE=#{certType}
 		</if>
 	</select>
 	

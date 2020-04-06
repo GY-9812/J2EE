@@ -21,7 +21,7 @@
 <script type="text/javascript">
 function oWorkPerformDel(pageNum)
 {
-	if(pageNum=='1'){
+	if(pageNum==1){
 		var ids="";
 		var $chkBoxes=$('#resultTable').find('input:checked'); //找到选中的checkBox集
 		if ($chkBoxes.length==0){   //如果不选会弹出警告框
@@ -34,6 +34,34 @@ function oWorkPerformDel(pageNum)
 		})
 		if (confirm("删除年度工作业绩,您确定要删除吗?"))
 			window.location="<%=basePath%>deleteMgrResult?keys="+ids+"&mgrId="+$("#mgrId").val();
+	}
+	if(pageNum==2){
+		var ids="";
+		var $chkBoxes=$('#certTable').find('input:checked'); //找到选中的checkBox集
+		if ($chkBoxes.length==0){   //如果不选会弹出警告框
+			alert('请至少选择一个数据！');
+			return false;
+		}
+		//遍历被选中的数据集
+		$($chkBoxes).each(function(){
+			ids+=$(this).attr('data-id')+",";
+		})
+		if (confirm("删除证照信息,您确定要删除吗?"))
+			window.location="<%=basePath%>deleteMgrCert?keys="+ids+"&mgrId="+$("#mgrId").val();
+	}
+	if(pageNum==3){
+		var ids="";
+		var $chkBoxes=$('#rprTable').find('input:checked'); //找到选中的checkBox集
+		if ($chkBoxes.length==0){   //如果不选会弹出警告框
+			alert('请至少选择一个数据！');
+			return false;
+		}
+		//遍历被选中的数据集
+		$($chkBoxes).each(function(){
+			ids+=$(this).attr('data-id')+",";
+		})
+		if (confirm("删除奖惩记录,您确定要删除吗?"))
+			window.location="<%=basePath%>deleteMgrRpr?keys="+ids+"&mgrId="+$("#mgrId").val();
 	}
 	if(pageNum==7){
 		var ids="";
@@ -48,6 +76,61 @@ function oWorkPerformDel(pageNum)
 		})
 		if (confirm("删除工作经历,您确定要删除吗?"))
 			window.location="<%=basePath%>deleteWorkHist?keys="+ids+"&mgrId="+$("#mgrId").val();
+	}
+}
+
+//添加时校验审批人姓名是否存在，存在才能添加
+function checkaPerson() {
+	var aPerson_val = $("#aPerson").val();
+	$.ajax({
+		url : "<%=basePath%>checkaPerson",
+		data : {
+			"aPerson" : aPerson_val
+		},
+		dataType : "json",
+		//编码设置
+		contentType : "application/json;charset=utf-8",
+		success : function(data) {
+			if (data.msg != null) {
+				alert(data.msg);
+				$("#aPerson").val("");
+				$("#aPerson").focus();
+			}
+		},
+		error : function() {
+			alert("后台服务器出错，请联系系统管理员！");
+		}
+	})
+}
+//修改时校验审批人姓名是否存在，存在才能添加
+function checkaPerson() {
+	var rprAPerson_val = $("#rprAPerson").val();
+	$.ajax({
+		url : "<%=basePath%>checkaPerson",
+		data : {
+			"aPerson" : rprAPerson_val
+		},
+		dataType : "json",
+		//编码设置
+		contentType : "application/json;charset=utf-8",
+		success : function(data) {
+			if (data.msg != null) {
+				alert(data.msg);
+				$("#aPerson").val("");
+				$("#aPerson").focus();
+			}
+		},
+		error : function() {
+			alert("后台服务器出错，请联系系统管理员！");
+		}
+	})
+}
+function toValid() {
+	//失效时间不能为空
+	var end_val = $("#end").val();
+	if (end_val == "") {
+		alert("失效时间不能为空，否则无法检测证书是否已失效！");
+		return false;
 	}
 }
 </script>
@@ -179,7 +262,14 @@ Date.prototype.format = function(format) {
 			<c:if test="${pageNum==2}">
 			<div id="tab2" class="tabson">
 				<ul class="seachform">
-					<li><label>证书名称</label><input name="certName" type="text" class="scinput" /></li>
+					<li><label>证书类型</label>
+						<div class="vocation">
+							<select class="select2" name="certType">
+								<option value="">请选择</option>
+								<option value="1">从业资格证</option>
+								<option value="2">岗位证书</option>
+							</select>
+						</div></li>
 					<li><label>&nbsp;</label><input type="submit" class="scbtn" value="查询" /></li>
 				</ul>
 				<div class="tools">
@@ -217,7 +307,8 @@ Date.prototype.format = function(format) {
 							<td><input name="key" type="checkbox" value="${cert.cmKey}" data-id="${cert.cmKey}"/></td>
 							<td>${cert.mgrName}</td>
 							<td>${cert.certName}</td>
-							<td>${cert.certType}</td>
+							<td><c:if test="${cert.certType=='1'}">从业资格证</c:if>
+								<c:if test="${cert.certType=='2'}">岗位证书</c:if></td>
 							<td>${cert.certNo}</td>
 							<td>${cert.certUnit}</td>
 							<td><fmt:formatDate value="${cert.start}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
@@ -545,26 +636,109 @@ Date.prototype.format = function(format) {
 					         //后台返回成功后处理数据，data为后台返回的json格式数据
 					         success:function(data){
 					        	 if(data.length>0){
-					        		 var Datetemp= new Date(data[0].officeDate);// 这里必须是整数，毫秒  
-				                     var dateStr = Datetemp.format("yyyy-MM-dd"); 
-					        		 $("#ResultCmKey").val(data[0].cmKey);
-					        		 $("#ResultMgrId").val(data[0].mgrId);
-					        		 $("#ResultWorkYear").val(data[0].cmWorkYear);
-					        		 $("#ResultWorkResult").val(data[0].cmWorkResult);
-					        		 $("#ResultAttach").val(data[0].cmAttach);
-					        		 $("#ResultmodifyDate").val(dateStr);
-					        		 $("#Resultmodifier").val(data[0].modifier);
+					        		 $("#resultCmKey").val(data[0].cmKey);
+					        		 $("#resultMgrId").val(data[0].mgrId);
+					        		 $("#resultWorkYear").val(data[0].cmWorkYear);
+					        		 $("#resultWorkResult").val(data[0].cmWorkResult);
+					        		 $("#resultAttach").val(data[0].cmAttach);
 					        	 }
 					         }
 					   });
 					}else if(scanLog == 3){
 						document.getElementById('light3').style.display = 'block';
 					}else if(scanLog == 4){
-						document.getElementById('light4').style.display = 'block';
+						var objs=document.getElementsByName("key");//获取复选框的年度工作业绩key
+						var selectObjs=[];
+						for(var i=0;i<objs.length;i++){
+							if(objs[i].checked){		
+								selectObjs.push(objs[i]);
+							};
+						}
+						//只允许有一个选中
+						if(selectObjs.length==1){
+							document.getElementById('light4').style.display = 'block';
+						}else if(selectObjs.length==0){
+							alert("必须选择一项纪录修改!");
+						}else{
+							alert("只能选择一项纪录修改!");
+						}
+						$.ajax({
+					         //发送请求URL，可使用相对路径也可使用绝对路径
+					         url:"<%=basePath%>/modifyMgrCert?cmKey="+selectObjs[0].value,
+					         //发送方式为GET，也可为POST，需要与后台对应
+					         type:"GET",
+					         //设置接收格式为JSON
+					         dataType:"json",
+					         //编码设置
+					         contentType:"application/json;charset=utf-8",
+					         //后台返回成功后处理数据，data为后台返回的json格式数据
+					         success:function(data){
+					        	 if(data.length>0){
+					        		 $("#certCmKey").val(data[0].cmKey);
+					        		 $("#certMgrId").val(data[0].mgrId);
+					        		 $("#certName").val(data[0].certName);
+					        		 $("#certType").val(data[0].certType);
+					        		 $("#certNo").val(data[0].certNo);
+					        		 $("#certUnit").val(data[0].certUnit);
+					        		 var Datetemp1= new Date(data[0].start);// 这里必须是整数，毫秒  
+				                     var dateStr1 = Datetemp1.format("yyyy-MM-dd"); 
+					        		 $("#certStart").val(dateStr1);
+					        		 var Datetemp2= new Date(data[0].end);// 这里必须是整数，毫秒  
+				                     var dateStr2 = Datetemp2.format("yyyy-MM-dd"); 
+					        		 $("#certEnd").val(dateStr2);
+					        		 $("#certRemark").val(data[0].remark);
+					        		 $("#certUrl").val(data[0].certUrl);
+					        	 }
+					         }
+					   });
 					}else if(scanLog == 5){
 						document.getElementById('light5').style.display = 'block';
 					}else if(scanLog == 6){
-						document.getElementById('light6').style.display = 'block';
+						var objs=document.getElementsByName("key");//获取复选框的年度工作业绩key
+						var selectObjs=[];
+						for(var i=0;i<objs.length;i++){
+							if(objs[i].checked){		
+								selectObjs.push(objs[i]);
+							};
+						}
+						//只允许有一个选中
+						if(selectObjs.length==1){
+							document.getElementById('light6').style.display = 'block';
+						}else if(selectObjs.length==0){
+							alert("必须选择一项纪录修改!");
+						}else{
+							alert("只能选择一项纪录修改!");
+						}
+						$.ajax({
+					         //发送请求URL，可使用相对路径也可使用绝对路径
+					         url:"<%=basePath%>/modifyMgrRpr?cmKey="+selectObjs[0].value,
+					         //发送方式为GET，也可为POST，需要与后台对应
+					         type:"GET",
+					         //设置接收格式为JSON
+					         dataType:"json",
+					         //编码设置
+					         contentType:"application/json;charset=utf-8",
+					         //后台返回成功后处理数据，data为后台返回的json格式数据
+					         success:function(data){
+					        	 if(data.length>0){
+					        		 $("#rprCmKey").val(data[0].cmKey);
+					        		 $("#rprMgrId").val(data[0].mgrId);
+					        		 $("#rprType").val(data[0].type);
+					        		 $("#rprSub").val(data[0].sub);
+					        		 var Datetemp1= new Date(data[0].date);// 这里必须是整数，毫秒  
+				                     var dateStr1 = Datetemp1.format("yyyy-MM-dd"); 
+					        		 $("#rprDate").val(dateStr1);
+					        		 $("#rprAUnit").val(data[0].aUnit);
+					        		 $("#rprAPerson").val(data[0].aPerson);
+					        		 var Datetemp2= new Date(data[0].rDate);// 这里必须是整数，毫秒  
+				                     var dateStr2 = Datetemp2.format("yyyy-MM-dd"); 
+					        		 $("#rprRDate").val(dateStr2);
+					        		 $("#rprAReason").val(data[0].aReason);
+					        		 $("#rprRemark").val(data[0].remark);
+					        		 $("#rprAttach").val(data[0].attach);
+					        	 }
+					         }
+					   });
 					}else if(scanLog == 7){
 						document.getElementById('light7').style.display = 'block';
 					}else if(scanLog == 8){
@@ -607,20 +781,16 @@ Date.prototype.format = function(format) {
 					         //后台返回成功后处理数据，data为后台返回的json格式数据
 					         success:function(data){
 					        	 if(data.length>0){
-					        		 var Datetemp= new Date(data[0].officeDate);// 这里必须是整数，毫秒  
-				                     var dateStr = Datetemp.format("yyyy-MM-dd"); 
 					        		 $("#workCmKey").val(data[0].cmKey);
 					        		 $("#workMgrId").val(data[0].mgrId);
+					        		 var Datetemp= new Date(data[0].officeDate);// 这里必须是整数，毫秒  
+				                     var dateStr = Datetemp.format("yyyy-MM-dd"); 
 					        		 $("#workofficeDate").val(dateStr);
 					        		 $("#workcmPostion").val(data[0].cmPostion);
-					        		 //$("#workcmPostion option[value='"+data[0].cmPostion+"']").prop("selected",true);
-					        		 //$('#workcmPostion').find("option[value="+data[0].cmPostion+"]").attr("selected",true);
 					        		 $('#workcmPostion').find("option[value='02']").attr("selected",true);
-					        		 // $("#workcmPostion").val(data[0].cmPostion).attr("selected",true);
 					        		 $("#workUnit").val(data[0].cmUnit);
 					        		 $("#workWork").val(data[0].cmWork);
-					        		 $("#workAttach").text(data[0].cmAttach);
-					        		 $("#workHistAttach").val(data[0].cmAttach);
+					        		 $("#workAttach").val(data[0].cmAttach);
 					        	 }
 					         }
 					   });
@@ -631,7 +801,7 @@ Date.prototype.format = function(format) {
 				}
 			</script>
 			<div id="light1" class="firstScan_main">
-				<form action="mgrResultAdd" method="post" enctype="multipart/form-data">
+				<form action="<%=basePath%>mgrResultAdd" method="post" enctype="multipart/form-data">
 				    <input type="hidden" name="modifier" id="modifier" value="${user.userId}">
 				    <input type="hidden" name="mgrId" value="${param.mgrId}">
 					<div class="formbody">
@@ -658,23 +828,17 @@ Date.prototype.format = function(format) {
 			</div>
 			<div id="light2" class="firstScan_main">
 				<form action="<%=basePath%>updateWorkResult" method="post" enctype="multipart/form-data">
-			    <input type="hidden" name="cmKey" id="ResultCmKey">
+			    <input type="hidden" name="cmKey" id="resultCmKey">
 			    <input type="hidden" name="modifier" value="${user.userId}">
-			    <input type="hidden" name="cmAttach" id="ResultAttach"> 
+			    <input type="hidden" name="cmAttach" id="resultAttach"> 
 					<div class="formbody">
 						<div class="formtitle">
 							<span>修改年度工作业绩</span>
 						</div>
 						<ul class="forminfo">
-							<li><label>客户经理编号</label>
-							    <c:if test="${param.mgrId =='' or param.mgrId==null}">
-							        <input name="mgrId" type="text" class="dfinput" value="${user.userId}" readonly/>
-							    </c:if>
-							    <c:if test="${param.mgrId !='' and param.mgrId!=null}">
-							        <input name="mgrId" type="text" class="dfinput" value="${param.mgrId}" readonly/>
-							    </c:if></li>
-							<li><label>工作年度</label><input name="cmWorkYear" id="ResultWorkYear" type="text" class="dfinput"/></li>
-							<li><label>工作业绩</label><input name="cmWorkResult" id="ResultWorkResult" type="text" class="dfinput"/></li>
+							<li><label>客户经理编号</label><input name="mgrId" id="resultMgrId" type="text" class="dfinput" readonly/></li>
+							<li><label>工作年度</label><input name="cmWorkYear" id="resultWorkYear" type="text" class="dfinput"/></li>
+							<li><label>工作业绩</label><input name="cmWorkResult" id="resultWorkResult" type="text" class="dfinput"/></li>
 							<li><label>附件依据</label><input name="upload" type="file"/></li>
 							<li>&nbsp;&nbsp;<input type="submit" class="btn" value="修改" />&nbsp;&nbsp;&nbsp;&nbsp;
 											<input type="reset" class="btn" value="关闭" onclick="closeWindow('light2')"/></li>
@@ -683,27 +847,37 @@ Date.prototype.format = function(format) {
 				</form>
 			</div>
 			<div id="light3" class="firstScan_main">
-				<form action="" method="post">
+				<form action="<%=basePath%>addMgrCert" method="post" onsubmit="return toValid()" enctype="multipart/form-data">
+				    <input type="hidden" name="modifier" id="modifier" value="${user.userId}">
+				    <input type="hidden" name="mgrId" value="${param.mgrId}">
 					<div class="formbody">
 						<div class="formtitle">
 							<span>添加证件</span>
 						</div>
 						<ul class="forminfo">
-							<li><label>客户经理编号</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>证书名称</label><input name="" type="text" class="dfinput" value="" /></li>
+							<li><label>客户经理编号</label>
+							    <c:if test="${param.mgrId =='' or param.mgrId==null}">
+							        <input name="mgrId" type="text" class="dfinput" value="${user.userId}" readonly/>
+							    </c:if>
+							    <c:if test="${param.mgrId !='' and param.mgrId!=null}">
+							        <input name="mgrId" type="text" class="dfinput" value="${param.mgrId}" readonly/>
+							    </c:if>
+						    </li>
+							<li><label>证书名称</label><input name="certName" type="text" class="dfinput"/></li>
 							<li><label>证书类型</label>
-							<div class="vocation">
-									<select class="select1">
-										<option value="0">请选择</option>
-										<option value="1">从业资格证</option>
-										<option value="2">岗位证书</option></select>
+								<div class="vocation">
+										<select class="select1" name="certType">
+											<option value="">请选择</option>
+											<option value="1">从业资格证</option>
+											<option value="2">岗位证书</option>
+										</select>
 								</div></li>
-							<li><label>证书编号</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>发证单位</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>发证时间</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>失效时间</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>备注</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>附件上传</label><input name="" type="file" class="dfselect1" /></li>
+							<li><label>证书编号</label><input name="certNo" type="text" class="dfinput"/></li>
+							<li><label>发证单位</label><input name="certUnit" type="text" class="dfinput"/></li>
+							<li><label>发证时间</label><input name="start" type="text" class="dfinput"/></li>
+							<li><label>失效时间</label><input name="end" id="end" type="text" class="dfinput"/></li>
+							<li><label>备注</label><input name="remark" type="text" class="dfinput"/></li>
+							<li><label>附件上传</label><input name="upload" type="file"/></li>
 							<li>&nbsp;&nbsp;<input type="submit" class="btn" value="添加" />&nbsp;&nbsp;&nbsp;&nbsp;
 											<input type="reset" class="btn" value="关闭" onclick="closeWindow('light3')" /></li>
 						</ul>
@@ -711,50 +885,62 @@ Date.prototype.format = function(format) {
 				</form>
 			</div>
 			<div id="light4" class="firstScan_main">
-				<form action="" method="post">
+				<form action="<%=basePath%>updateMgrCert" method="post" enctype="multipart/form-data">
+			    <input type="hidden" name="cmKey" id="certCmKey">
+			    <input type="hidden" name="modifier" value="${user.userId}">
+			    <input type="hidden" name="certUrl" id="certUrl">
 					<div class="formbody">
 						<div class="formtitle">
 							<span>修改证件</span>
 						</div>
 						<ul class="forminfo">
-							<li><label>客户经理编号</label><input name="" type="text" class="dfinput" value="000022" /></li>
-							<li><label>证书名称</label><input name="" type="text" class="dfinput" value="工程师" /></li>
+							<li><label>客户经理编号</label><input name="mgrId" id="certMgrId" type="text" class="dfinput" readonly/></li>
+							<li><label>证书名称</label><input name="certName" id="certName" type="text" class="dfinput"/></li>
 							<li><label>证书类型</label>
 							<div class="vocation">
-									<select class="select1">
-										<option value="0">请选择</option>
-										<option value="1" selected>从业资格证</option>
+									<select class="select1" name="certType">
+										<option value="">请选择</option>
+										<option value="1">从业资格证</option>
 										<option value="2">岗位证书</option></select>
 								</div></li>
-							<li><label>证书编号</label><input name="" type="text" class="dfinput" value="092232008000912" /></li>
-							<li><label>发证单位</label><input name="" type="text" class="dfinput" value="全国计算机中心" /></li>
-							<li><label>发证时间</label><input name="" type="text" class="dfinput" value="2016-04-09" /></li>
-							<li><label>失效时间</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>备注</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>附件上传</label><input name="" type="file" class="dfselect1" /></li>
-							<li>&nbsp;&nbsp;<input type="submit" class="btn" value="修改" />&nbsp;&nbsp;&nbsp;&nbsp;
-											<input name="" type="reset" class="btn" value="关闭" onclick="closeWindow('light4')" /></li>
+							<li><label>证书编号</label><input name="certNo" id="certNo" type="text" class="dfinput"/></li>
+							<li><label>发证单位</label><input name="certUnit" id="certUnit" type="text" class="dfinput"/></li>
+							<li><label>发证时间</label><input name="start" id="certStart" type="text" class="dfinput"/></li>
+							<li><label>失效时间</label><input name="end" id="certEnd" type="text" class="dfinput"/></li>
+							<li><label>备注</label><input name="remark" id="certRemark" type="text" class="dfinput"/></li>
+							<li><label>附件上传</label><input name="upload" type="file"/></li>
+							<li>&nbsp;&nbsp;<input type="submit" class="btn" value="修改"/>&nbsp;&nbsp;&nbsp;&nbsp;
+											<input type="reset" class="btn" value="关闭" onclick="closeWindow('light4')" /></li>
 						</ul>
 					</div>
 				</form>
 			</div>
 			<div id="light5" class="firstScan_main">
-				<form action="" method="post">
+				<form action="<%=basePath%>addMgrRpr" method="post" enctype="multipart/form-data">
+				    <input type="hidden" name="modifier" id="modifier" value="${user.userId}">
+				    <input type="hidden" name="mgrId" value="${param.mgrId}">
 					<div class="formbody">
 						<div class="formtitle">
 							<span>添加奖惩记录</span>
 						</div>
 						<ul class="forminfo">
-							<li><label>客户经理编号</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>奖惩分类</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>奖惩内容</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>生效日期</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>审批单位</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>审批人</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>撤销日期</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>撤销原因</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>备注</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>附件上传</label><input name="" type="file" class="dfselect1" /></li>
+							
+							<li><label>客户经理编号</label>
+							    <c:if test="${param.mgrId =='' or param.mgrId==null}">
+							        <input name="mgrId" type="text" class="dfinput" value="${user.userId}" readonly/>
+							    </c:if>
+							    <c:if test="${param.mgrId !='' and param.mgrId!=null}">
+							        <input name="mgrId" type="text" class="dfinput" value="${param.mgrId}" readonly/>
+							    </c:if></li>
+							<li><label>奖惩分类</label><input name="type" type="text" class="dfinput"/></li>
+							<li><label>奖惩内容</label><input name="sub" type="text" class="dfinput"/></li>
+							<li><label>生效日期</label><input name="date" type="text" class="dfinput"/></li>
+							<li><label>审批单位</label><input name="aUnit" type="text" class="dfinput"/></li>
+							<li><label>审批人</label><input name="aPerson" id="aPerson" type="text" class="dfinput" onchange="checkaPerson()"/></li>
+							<li><label>撤销日期</label><input name="rDate" type="text" class="dfinput"/></li>
+							<li><label>撤销原因</label><input name="aReason" type="text" class="dfinput"/></li>
+							<li><label>备注</label><input name="remark" type="text" class="dfinput"/></li>
+							<li><label>附件上传</label><input name="upload" type="file"/></li>
 							<li>&nbsp;&nbsp;<input type="submit" class="btn" value="添加" />&nbsp;&nbsp;&nbsp;&nbsp;
 											<input type="reset" class="btn" value="关闭" onclick="closeWindow('light5')" /></li>
 						</ul>
@@ -762,30 +948,33 @@ Date.prototype.format = function(format) {
 				</form>
 			</div>
 			<div id="light6" class="firstScan_main">
-				<form action="" method="post">
+				<form action="<%=basePath%>updateMgrRpr" method="post" enctype="multipart/form-data">
+			    <input type="hidden" name="cmKey" id="rprCmKey">
+			    <input type="hidden" name="modifier" value="${user.userId}">
+			    <input type="hidden" name="attach" id="rprAttach">
 					<div class="formbody">
 						<div class="formtitle">
 							<span>修改奖惩记录</span>
 						</div>
 						<ul class="forminfo">
-							<li><label>客户经理编号</label><input name="" type="text" class="dfinput" value="000022" /></li>
-							<li><label>奖惩分类</label><input name="" type="text" class="dfinput" value="优秀员工" /></li>
-							<li><label>奖惩内容</label><input name="" type="text" class="dfinput" value="现金5000元" /></li>
-							<li><label>生效日期</label><input name="" type="text" class="dfinput" value="2016-01-01" /></li>
-							<li><label>审批单位</label><input name="" type="text" class="dfinput" value="贵州省分公司" /></li>
-							<li><label>审批人</label><input name="" type="text" class="dfinput" value="admin" /></li>
-							<li><label>撤销日期</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>撤销原因</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>备注</label><input name="" type="text" class="dfinput" value="" /></li>
-							<li><label>附件上传</label><input name="" type="file" class="dfselect1" /></li>
+							<li><label>客户经理编号</label><input name="mgrId" id="rprMgrId" type="text" class="dfinput" readonly/></li>
+							<li><label>奖惩分类</label><input name="type" id="rprType" type="text" class="dfinput"/></li>
+							<li><label>奖惩内容</label><input name="sub" id="rprSub" type="text" class="dfinput"/></li>
+							<li><label>生效日期</label><input name="date" id="rprDate" type="text" class="dfinput"/></li>
+							<li><label>审批单位</label><input name="aUnit" id="rprAUnit" type="text" class="dfinput"/></li>
+							<li><label>审批人</label><input name="aPerson" id="rprAPerson" type="text" class="dfinput" onchange="checkaPerson()"/></li>
+							<li><label>撤销日期</label><input name="rDate" id="rprRDate" type="text" class="dfinput"/></li>
+							<li><label>撤销原因</label><input name="aReason" id="rprAReason" type="text" class="dfinput"/></li>
+							<li><label>备注</label><input name="remark" id="rprRemark" type="text" class="dfinput"/></li>
+							<li><label>附件上传</label><input name="upload" type="file"/></li>
 							<li>&nbsp;&nbsp;<input type="submit" class="btn"value="修改" />&nbsp;&nbsp;&nbsp;&nbsp;
-											<input name="" type="reset" class="btn" value="关闭" onclick="closeWindow('light6')" /></li>
+											<input type="reset" class="btn" value="关闭" onclick="closeWindow('light6')" /></li>
 						</ul>
 					</div>
 				</form>
 			</div>
 			<div id="light7" class="firstScan_main">
-				<form action="" method="post">
+				<form action="" method="post" enctype="multipart/form-data">
 					<div class="formbody">
 						<div class="formtitle">
 							<span>添加考核记录</span>
@@ -804,7 +993,7 @@ Date.prototype.format = function(format) {
 				</form>
 			</div>
 			<div id="light8" class="firstScan_main">
-				<form action="" method="post">
+				<form action="" method="post" enctype="multipart/form-data">
 					<div class="formbody">
 						<div class="formtitle">
 							<span>修改考核记录</span>
@@ -823,7 +1012,7 @@ Date.prototype.format = function(format) {
 				</form>
 			</div>
 			<div id="light9" class="firstScan_main">
-				<form action="" method="post">
+				<form action="" method="post" enctype="multipart/form-data">
 					<div class="formbody">
 						<div class="formtitle">
 							<span>添加学习培训记录</span>
@@ -845,7 +1034,7 @@ Date.prototype.format = function(format) {
 				</form>
 			</div>
 			<div id="light10" class="firstScan_main">
-				<form action="" method="post">
+				<form action="" method="post" enctype="multipart/form-data">
 					<div class="formbody">
 						<div class="formtitle">
 							<span>修改学习培训记录</span>
@@ -867,7 +1056,7 @@ Date.prototype.format = function(format) {
 				</form>
 			</div>
 			<div id="light11" class="firstScan_main">
-				<form action="" method="post">
+				<form action="" method="post" enctype="multipart/form-data">
 					<div class="formbody">
 						<div class="formtitle">
 							<span>添加等级认定记录</span>
@@ -885,7 +1074,7 @@ Date.prototype.format = function(format) {
 				</form>
 			</div>
 			<div id="light12" class="firstScan_main">
-				<form action="" method="post">
+				<form action="" method="post" enctype="multipart/form-data">
 					<div class="formbody">
 						<div class="formtitle">
 							<span>修改等级认定记录</span>
@@ -939,17 +1128,17 @@ Date.prototype.format = function(format) {
 				</form>
 			</div>
 			<div id="light14" class="firstScan_main">
-				<form action="<%=basePath %>updateWorkHistory" method="post" enctype="multipart/form-data">
+				<form action="<%=basePath%>updateWorkHistory" method="post" enctype="multipart/form-data">
 			    <input type="hidden" name="cmKey" id="workCmKey">
 			    <input type="hidden" name="modifier" value="${user.userId}">
-			    <input type="hidden" name="cmAttach" id="workHistAttach">
+			    <input type="hidden" name="cmAttach" id="workAttach">
 					<div class="formbody">
 						<div class="formtitle">
 							<span>修改工作经历</span>
 						</div>
 						<ul class="forminfo">
-						    <li><label>客户经理编号</label><input name="mgrId" id="workMgrId" type="text" class="dfinput" readonly/> </li>
-						    <li><label>任职日期</label><input name="officeDate" id="workofficeDate" type="text" class="dfinput"/> </li>
+						    <li><label>客户经理编号</label><input name="mgrId" id="workMgrId" type="text" class="dfinput" readonly/></li>
+						    <li><label>任职日期</label><input name="officeDate" id="workofficeDate" type="text" class="dfinput"/></li>
 						    <li><label>职务</label> 
 						    	<div class="vocation">
 							    	<select class="select1" name="cmPostion" id="workcmPostion">
@@ -962,7 +1151,7 @@ Date.prototype.format = function(format) {
 						     </li>
 						    <li><label>单位</label><input name="cmUnit" id="workUnit" type="text" class="dfinput"/> </li>
 						    <li><label>工作经历</label><input name="cmWork" id="workWork" type="text" class="dfinput"/> </li>
-						    <li><label>附件上传</label><input name="upload" id="workAttach" type="file"/></li>
+						    <li><label>附件上传</label><input name="upload" type="file"/></li>
 						    <li>&nbsp;&nbsp;<input type="submit" class="btn" value="修改"/>&nbsp;&nbsp;&nbsp;&nbsp;
 						    				<input type="reset" class="btn" value="关闭" onclick="closeWindow('light14')"/></li>
 						</ul>
