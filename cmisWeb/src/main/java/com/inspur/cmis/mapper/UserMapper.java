@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.List;
 
 import com.inspur.cmis.pojo.User;
+import com.inspur.cmis.pojo.UserExt;
 
 public interface UserMapper {
 	public User getUser(User user);
@@ -16,4 +17,6 @@ public interface UserMapper {
 	public List<User> getUserByUserName(String username);
 	public User getUserByUserId(int userId);
 	public void updateUserInfo(User user);
+	   public void updateLastTime(User user);
+	public List<UserExt> userStat();
 }

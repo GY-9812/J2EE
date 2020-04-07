@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import com.inspur.cmis.pojo.User;
+import com.inspur.cmis.pojo.UserExt;
 @Resource
 public interface UserService {
    public User getUser(User user);
@@ -18,4 +19,6 @@ public interface UserService {
    public List<User> getUserByUserName(String username);
    public User getUserByUserId(int userId);
    public void updateUserInfo(User user);
+   public void updateLastTime(User user);
+   public List<UserExt> userStat();
 }

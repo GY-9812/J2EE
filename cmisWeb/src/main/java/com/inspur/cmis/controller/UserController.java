@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.inspur.cmis.pojo.User;
+import com.inspur.cmis.pojo.UserExt;
 import com.inspur.cmis.service.UserService;
 
 @Controller
@@ -157,5 +158,12 @@ public class UserController {
 		model.addAttribute("flag", "1");
 		
 		return "/user/userInfoUpdate.jsp";
+	}
+
+	@RequestMapping("/userStat")	
+	@ResponseBody
+	public List<UserExt> userStat(){
+		List<UserExt> userList= userService.userStat();
+		return userList;
 	}
 }

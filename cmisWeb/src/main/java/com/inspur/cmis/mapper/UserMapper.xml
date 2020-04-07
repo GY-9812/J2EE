@@ -84,4 +84,14 @@
 	<update id="updateUserInfo" parameterType="user">
 		update yc_member set CNAME=#{username},MEM_SEX=#{sex},MEM_BORN=#{birthday},MEM_MAIL=#{email},LAST_TIME=#{lastTime},ROLEID=#{roleId} where MEM_ID=#{userId}
 	</update>
+	
+	<!--用户登录时修改最后登录时间-->
+	<update id="updateLastTime"  parameterType="user">
+		update yc_member set LAST_TIME=#{lastTime} where CNAME=#{username}
+	</update>
+	
+	<!--按照性别进行统计查询 -->
+	<select id="userStat" resultType="userExt">
+		select MEM_SEX type,count(*) count from yc_member group by MEM_SEX
+	</select>
 </mapper>

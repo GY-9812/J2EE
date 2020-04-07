@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.inspur.cmis.mapper.UserMapper;
 import com.inspur.cmis.pojo.User;
+import com.inspur.cmis.pojo.UserExt;
 import com.inspur.cmis.service.UserService;
 
 @Service("userService")
@@ -20,7 +21,6 @@ public class UserServiceImpl implements UserService {
 	 * 用户登录查询
 	 */
 	public User getUser(User user) {
-		// TODO Auto-generated method stub
 		return userMapper.getUser(user);
 	}
 
@@ -75,6 +75,11 @@ public class UserServiceImpl implements UserService {
 	public User getUserByUserId(int userId) {
 		return userMapper.getUserByUserId(userId);
 	}
+
+	@Override
+	   public void updateLastTime(User user) {
+		userMapper.updateLastTime(user);
+	}
 	
 	/**
 	 * 用户的修改操作
@@ -83,4 +88,8 @@ public class UserServiceImpl implements UserService {
 		userMapper.updateUserInfo(user);
 	}
 
+	@Override
+	public List<UserExt> userStat() {
+		return userMapper.userStat();
+	}
 }

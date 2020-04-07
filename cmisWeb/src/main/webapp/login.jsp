@@ -19,7 +19,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	$(window).resize(function(){  
     $('.loginbox').css({'position':'absolute','left':($(window).width()-692)/2});
     })  
-});  
+});
 </script> 
 </head>
 <body style="background-color:#1c77ac; background-image:url(images/light.png); background-repeat:no-repeat; background-position:center top; overflow:hidden;">
@@ -33,10 +33,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		    <ul>
 		    <span><font color="red">${error}</font></span>
 		    <span><font color="red">${message}</font></span>
-		    <li><input name="username" type="text" class="loginuser"/></li>
-		    <li><input name="password" type="password" class="loginpwd"/></li>
+		    <li><input name="username" type="text" value="${cookie['user'].value.split('#')[0]}" class="loginuser"/></li>
+		    <li><input name="password" type="password" value="${cookie['user'].value.split('#')[1]}" class="loginpwd"/></li>
 		    <li><input type="submit" class="loginbtn" value="登录"/>
-		    <label><input type="checkbox" value="" checked="checked" />记住密码</label></li>
+		    <label><input type="checkbox" checked="checked" name="rem" value="1"/>记住密码</label></li>
 		    </ul>
 	    </div>
     </div>

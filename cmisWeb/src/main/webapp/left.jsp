@@ -85,7 +85,8 @@ $(function(){
 	    <span><img src="images/leftico01.png" /></span>报表管理
 	    </div>
 	    	<ul class="menuson">
-	        <li><cite></cite><a href="statList" target="rightFrame">报表管理</a><i></i></li>
+	        <li><cite></cite><a href="statList" target="rightFrame">客户经理信息统计</a><i></i></li>
+	        <li><cite></cite><a href="user/clientCustStat.jsp" target="rightFrame">客户信息资产情况统计</a><i></i></li>
 	        </ul>    
 	   </dd>
 	   <dd>
