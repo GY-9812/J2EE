@@ -32,6 +32,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    <div class="loginbox">
 		    <ul>
 		    <span><font color="red">${error}</font></span>
+		    <span><font color="red">${message}</font></span>
 		    <li><input name="username" type="text" class="loginuser"/></li>
 		    <li><input name="password" type="password" class="loginpwd"/></li>
 		    <li><input type="submit" class="loginbtn" value="登录"/>
