@@ -31,6 +31,8 @@ function initData() {
 				var seriesValue = [];
 				for(var i=0;i<len;i++){
 					axisLabel[i] = data[i].mgrName;
+				}
+				for(var i=0;i<3;i++){
 					var arrData = [];
 					var seriesDataVal = null;
 					if (i==0) {
