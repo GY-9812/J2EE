@@ -122,7 +122,7 @@ function oWorkPerformDel(pageNum)
 }
 
 //添加时校验审批人姓名是否存在，存在才能添加
-function checkaPerson() {
+function checkPerson() {
 	var aPerson_val = $("#aPerson").val();
 	$.ajax({
 		url : "<%=basePath%>checkaPerson",
@@ -1104,7 +1104,7 @@ Date.prototype.format = function(format) {
 							<li><label>奖惩内容</label><input name="sub" type="text" class="dfinput"/></li>
 							<li><label>生效日期</label><input name="date" type="text" class="dfinput"/></li>
 							<li><label>审批单位</label><input name="aUnit" type="text" class="dfinput"/></li>
-							<li><label>审批人</label><input name="aPerson" id="aPerson" type="text" class="dfinput" onchange="checkaPerson()"/></li>
+							<li><label>审批人</label><input name="aPerson" id="aPerson" type="text" class="dfinput" onchange="checkPerson()"/></li>
 							<li><label>撤销日期</label><input name="rDate" type="text" class="dfinput"/></li>
 							<li><label>撤销原因</label><input name="aReason" type="text" class="dfinput"/></li>
 							<li><label>备注</label><input name="remark" type="text" class="dfinput"/></li>

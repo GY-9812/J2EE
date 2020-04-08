@@ -62,6 +62,7 @@ $(document).ready(function(){
 			<span>导入客户经理数据</span>
 		</div>
 		<form action="" method="POST" enctype="multipart/form-data" id="form1">
+			<input type="hidden" name="modifier" value="${uname}">
 			<ul class="forminfo">
 				<li><label>选择文件路径:</label><input id="upfile" name="upfile" type="file" class="dfinputfile" /></li>
 				<li><label>&nbsp;</label><input name="" type="button" id="btn" class="btn" value="导入" /></li>

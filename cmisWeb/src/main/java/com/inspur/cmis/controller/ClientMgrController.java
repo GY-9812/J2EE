@@ -681,7 +681,9 @@ public class ClientMgrController {
 			manager.setUnit(String.valueOf(lo.get(18)));// 机构
 			manager.setDept(String.valueOf(lo.get(19)));// 部门
 			manager.setLevel(String.valueOf(lo.get(20)));// 客户经理等级
-
+			manager.setStatus("T");//设置启用状态
+			manager.setModifyDate(today);//设置修改时间
+			
 			clientList.add(manager);
 			User user = new User();
 			user.setUsername(String.valueOf(lo.get(0)));

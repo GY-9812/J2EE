@@ -17,7 +17,7 @@ $(function() {
 });
 //生成数据
 function initData() {
-	var legendData= ['年收入', '资产', '负债'];
+	var legendData= ['资产','年收入','负债'];
 	var bgColorList =['#FBB730', '#31BDF2', '#6197fb'];
 	var axisLabel ;
 	 $.ajax({
@@ -143,7 +143,7 @@ function buildChart(legendData, axisLabel, seriesValue) {
 
 </script>
 </head>
-<body >
+<body>
     <div id="container" style="width:1150px;height:500px"></div>
 </body>
 </html>

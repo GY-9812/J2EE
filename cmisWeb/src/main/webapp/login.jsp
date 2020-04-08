@@ -20,6 +20,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     $('.loginbox').css({'position':'absolute','left':($(window).width()-692)/2});
     })  
 });
+	if(top != window){
+		top.location.href=window.location.href
+	}
 </script> 
 </head>
 <body style="background-color:#1c77ac; background-image:url(images/light.png); background-repeat:no-repeat; background-position:center top; overflow:hidden;">

@@ -91,7 +91,7 @@
 			<li><a href="<%=basePath %>regularMeeting">例会管理</a></li>
 		</ul>
 	</div>
-	<form action="<%=basePath %>regularMeeting" method="post" name="form1" enctype="multipart/form-data">
+	<form action="<%=basePath %>regularMeetList" method="post" name="form1" enctype="multipart/form-data">
 		<div class="formbody">
 			<ul class="seachform">
 				<li><label>客户经理编号</label><input name="cmid" type="text" class="scinput" value="${cmid}"/></li>
